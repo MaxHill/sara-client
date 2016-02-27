@@ -1,0 +1,6 @@
+{
+	"preset": "google",
+	"esnext": true,
+	"excludeFiles": ["public/js/**/*.js", "gulpfile.js"],
+    "validateIndentation": 4
+}
