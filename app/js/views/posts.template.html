@@ -1,0 +1,11 @@
+<loader v-if="!loaded">posts</loader>
+
+<div v-if="loaded">
+    <div v-if="error">
+        <h3>{{message}}</h3>
+    </div>
+    <section v-for="post in posts">
+        <blog-article :post.sync="post"></blog-article>
+    </section>
+
+</div>

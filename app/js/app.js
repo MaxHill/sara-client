@@ -19,14 +19,6 @@ var App = Vue.extend({
     ready() {
         // From example plugin
         this.$pluginSay();
-        // GET request
-        var resource = this.$resource('posts');
-
-      // get item
-      resource.get().then(function (response) {
-          console.log(response);
-      });
-
     },
     components: {
         navigation: require('./components/nav')

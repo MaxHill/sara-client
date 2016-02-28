@@ -22,13 +22,6 @@ var App = Vue.extend({
     ready: function ready() {
         // From example plugin
         this.$pluginSay();
-        // GET request
-        var resource = this.$resource('posts');
-
-        // get item
-        resource.get().then(function (response) {
-            console.log(response);
-        });
     },
 
     components: {
@@ -40,53 +33,42 @@ var Router = new VueRouter({ history: true });
 Router.map(require('./router.js'));
 Router.start(App, '#app');
 
-},{"./components/nav":4,"./plugins/example":7,"./router.js":8,"vue":41,"vue-resource":29,"vue-router":40}],2:[function(require,module,exports){
+},{"./components/nav":6,"./plugins/example":8,"./router.js":9,"vue":44,"vue-resource":32,"vue-router":43}],2:[function(require,module,exports){
 'use strict';
 
 /**
- * Outputs "Hello" to the page.
+ * The article view.
  * @type {Object}
  */
 module.exports = {
-    template: require('./hello.template.html'),
+  template: require('./article.template.html'),
+  props: ['post']
+};
 
-    // Simple mixin thats add function that screams at the user
-    mixins: [require('../mixins/scream')],
+},{"./article.template.html":3}],3:[function(require,module,exports){
+module.exports = "<article>\n    <h1><a v-link=\"{ name: 'post', params: { id: post.id } }\">{{ post.title }}</a></h1>\n    <h5>{{ post.created }}</h5>\n    <p>{{ post.content }}</p>\n</article>\n";
 
-    data: function data() {
-        return {
-            name: 'Max',
-            index: 1
-        };
+},{}],4:[function(require,module,exports){
+'use strict';
+
+/**
+ * The loader view.
+ * @type {Object}
+ */
+module.exports = {
+    template: require('./loader.template.html'),
+    components: {
+        // components
     },
-
-
     methods: {
-        changeName: function changeName() {
-            var names = ['Max', 'Carina', 'Edward'];
-            this.name = names[this.index];
-
-            this.index++;
-            if (this.index == 3) {
-                this.index = 0;
-            }
-        }
-    },
-
-    ready: function ready() {
-        this.scream();
-        var self = this;
-        this.changeName();
-        setInterval(function () {
-            self.changeName();
-        }, 1100);
+        // methods
     }
 };
 
-},{"../mixins/scream":6,"./hello.template.html":3}],3:[function(require,module,exports){
-module.exports = "<div>\n    <h3>Hello from vue; eller {{name}}</h3>\n</div>\n";
+},{"./loader.template.html":5}],5:[function(require,module,exports){
+module.exports = "<p>Loading <slot>content</slot></p>\n";
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 /**
@@ -101,25 +83,10 @@ module.exports = {
     }
 };
 
-},{"./nav.template.html":5}],5:[function(require,module,exports){
-module.exports = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n    <div class=\"container\">\n        <div class=\"navbar-header\">\n            <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            </button>\n            <a class=\"navbar-brand\" v-link=\"{ path: '/' }\">FOREVERLIVING AWESOME!</a>\n        </div>\n\n        <div class=\"collapse navbar-collapse\">\n\n            <ul class=\"nav navbar-nav navbar-right\">\n                <li><a v-link=\"{ path: '/' }\">Home</a></li>\n                <li><a v-link=\"{ path: '/about' }\">About</a></li>\n            </ul>\n        </div><!--/.nav-collapse -->\n    </div>\n</nav>\n";
+},{"./nav.template.html":7}],7:[function(require,module,exports){
+module.exports = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n    <div class=\"container\">\n        <div class=\"navbar-header\">\n            <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            </button>\n            <a class=\"navbar-brand\" v-link=\"{ path: '/' }\">FOREVERLIVING AWESOME!</a>\n        </div>\n\n        <div class=\"collapse navbar-collapse\">\n\n            <ul class=\"nav navbar-nav navbar-right\">\n                <li><a v-link=\"{ path: '/' }\">Home</a></li>\n                <li><a v-link=\"{ path: '/posts' }\">Posts</a></li>\n            </ul>\n        </div><!--/.nav-collapse -->\n    </div>\n</nav>\n";
 
-},{}],6:[function(require,module,exports){
-'use strict';
-
-/**
- * Simple mixin thats add function that screams at the user
- * @type {Object}
- */
-module.exports = {
-    methods: {
-        scream: function scream() {
-            console.log('AAAAAAAAAAAA!!!!!!');
-        }
-    }
-};
-
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 /**
@@ -137,22 +104,26 @@ function example(Vue, options) {
 
 module.exports = example;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = {
     '/': {
         component: require('./views/welcome')
     },
-    '/about': {
-        component: require('./views/about')
+    'posts/:id': {
+        name: 'post',
+        component: require('./views/post')
+    },
+    '/posts': {
+        component: require('./views/posts')
     },
     '*': {
         component: require('./views/404')
     }
 };
 
-},{"./views/404":9,"./views/about":11,"./views/welcome":13}],9:[function(require,module,exports){
+},{"./views/404":10,"./views/post":12,"./views/posts":14,"./views/welcome":16}],10:[function(require,module,exports){
 'use strict';
 
 /**
@@ -166,41 +137,110 @@ module.exports = {
     }
 };
 
-},{"./404.template.html":10}],10:[function(require,module,exports){
+},{"./404.template.html":11}],11:[function(require,module,exports){
 module.exports = "<center><h2>404 - Not found</h2></center>\n";
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 /**
- * The welcome view greeting the user.
+ * The post view.
  * @type {Object}
  */
 module.exports = {
-  template: require('./about.template.html')
-};
+    template: require('./post.template.html'),
+    data: function data() {
+        return {
+            resource: this.$resource('posts{/id}'),
+            loaded: false,
+            id: this.$route.params.id,
+            post: {}
+        };
+    },
 
-},{"./about.template.html":12}],12:[function(require,module,exports){
-module.exports = "<h3>Hello</h3>\n<p>Is it me you are looking for ?</p>\n";
-
-},{}],13:[function(require,module,exports){
-'use strict';
-
-/**
- * The welcome view greeting the user.
- * @type {Object}
- */
-module.exports = {
-    template: require('./welcome.template.html'),
     components: {
-        hello: require('../components/hello')
+        blogArticle: require('../components/article'),
+        loader: require('../components/loader')
+    },
+    ready: function ready() {
+        this.getPost();
+    },
+
+    methods: {
+        getPost: function getPost() {
+            this.resource.get({ id: this.id }).then(function (response) {
+                this.$set('post', response.data.data);
+                this.$set('loaded', true);
+            }, function (response) {
+                console.log('Im awesome');
+                this.$router.go({ path: '/posts' });
+            });
+        }
     }
 };
 
-},{"../components/hello":2,"./welcome.template.html":14}],14:[function(require,module,exports){
-module.exports = "<div>\n    <hello></hello>\n    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda dolore distinctio officiis eius consequuntur aperiam neque ex voluptates odio repellat deserunt eos consequatur at amet tempora sequi, non sapiente.</p>\n</div>\n";
+},{"../components/article":2,"../components/loader":4,"./post.template.html":13}],13:[function(require,module,exports){
+module.exports = "<div>\n    <loader v-if=\"!loaded\">post</loader>\n    <blog-article v-if=\"loaded\" :post.sync=\"post\"></blog-article>\n</div>\n";
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
+'use strict';
+
+/**
+ * The posts view.
+ * @type {Object}
+ */
+module.exports = {
+    template: require('./posts.template.html'),
+    data: function data() {
+        return {
+            resource: this.$resource('posts'),
+            error: false,
+            loaded: false,
+            message: '',
+            posts: []
+        };
+    },
+
+    components: {
+        blogArticle: require('../components/article'),
+        loader: require('../components/loader')
+    },
+    ready: function ready() {
+        this.getPosts();
+    },
+
+    methods: {
+        getPosts: function getPosts() {
+            this.resource.get().then(function (response) {
+                this.$set('posts', response.data.data);
+                this.$set('loaded', true);
+            }, function (argument) {
+                this.$set('error', true);
+                this.$set('message', 'Sorry no posts yet.');
+            });
+        }
+    }
+};
+
+},{"../components/article":2,"../components/loader":4,"./posts.template.html":15}],15:[function(require,module,exports){
+module.exports = "<loader v-if=\"!loaded\">posts</loader>\n\n<div v-if=\"loaded\">\n    <div v-if=\"error\">\n        <h3>{{message}}</h3>\n    </div>\n    <section v-for=\"post in posts\">\n        <blog-article :post.sync=\"post\"></blog-article>\n    </section>\n\n</div>\n";
+
+},{}],16:[function(require,module,exports){
+'use strict';
+
+/**
+ * The welcome view greeting the user.
+ * @type {Object}
+ */
+module.exports = {
+  template: require('./welcome.template.html'),
+  components: {}
+};
+
+},{"./welcome.template.html":17}],17:[function(require,module,exports){
+module.exports = "<div>\n<h1>Hello</h1>\n    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda dolore distinctio officiis eius consequuntur aperiam neque ex voluptates odio repellat deserunt eos consequatur at amet tempora sequi, non sapiente.</p>\n</div>\n";
+
+},{}],18:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -293,7 +333,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * Before Interceptor.
  */
@@ -313,7 +353,7 @@ module.exports = {
 
 };
 
-},{"../util":39}],17:[function(require,module,exports){
+},{"../util":42}],20:[function(require,module,exports){
 /**
  * Base client.
  */
@@ -380,7 +420,7 @@ function parseHeaders(str) {
     return headers;
 }
 
-},{"../../promise":32,"../../util":39,"./xhr":20}],18:[function(require,module,exports){
+},{"../../promise":35,"../../util":42,"./xhr":23}],21:[function(require,module,exports){
 /**
  * JSONP client.
  */
@@ -430,7 +470,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":32,"../../util":39}],19:[function(require,module,exports){
+},{"../../promise":35,"../../util":42}],22:[function(require,module,exports){
 /**
  * XDomain client (Internet Explorer).
  */
@@ -469,7 +509,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":32,"../../util":39}],20:[function(require,module,exports){
+},{"../../promise":35,"../../util":42}],23:[function(require,module,exports){
 /**
  * XMLHttp client.
  */
@@ -521,7 +561,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":32,"../../util":39}],21:[function(require,module,exports){
+},{"../../promise":35,"../../util":42}],24:[function(require,module,exports){
 /**
  * CORS Interceptor.
  */
@@ -560,7 +600,7 @@ function crossOrigin(request) {
     return (requestUrl.protocol !== originUrl.protocol || requestUrl.host !== originUrl.host);
 }
 
-},{"../util":39,"./client/xdr":19}],22:[function(require,module,exports){
+},{"../util":42,"./client/xdr":22}],25:[function(require,module,exports){
 /**
  * Header Interceptor.
  */
@@ -588,7 +628,7 @@ module.exports = {
 
 };
 
-},{"../util":39}],23:[function(require,module,exports){
+},{"../util":42}],26:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -688,7 +728,7 @@ Http.headers = {
 
 module.exports = _.http = Http;
 
-},{"../promise":32,"../util":39,"./before":16,"./client":17,"./cors":21,"./header":22,"./interceptor":24,"./jsonp":25,"./method":26,"./mime":27,"./timeout":28}],24:[function(require,module,exports){
+},{"../promise":35,"../util":42,"./before":19,"./client":20,"./cors":24,"./header":25,"./interceptor":27,"./jsonp":28,"./method":29,"./mime":30,"./timeout":31}],27:[function(require,module,exports){
 /**
  * Interceptor factory.
  */
@@ -735,7 +775,7 @@ function when(value, fulfilled, rejected) {
     return promise.then(fulfilled, rejected);
 }
 
-},{"../promise":32,"../util":39}],25:[function(require,module,exports){
+},{"../promise":35,"../util":42}],28:[function(require,module,exports){
 /**
  * JSONP Interceptor.
  */
@@ -755,7 +795,7 @@ module.exports = {
 
 };
 
-},{"./client/jsonp":18}],26:[function(require,module,exports){
+},{"./client/jsonp":21}],29:[function(require,module,exports){
 /**
  * HTTP method override Interceptor.
  */
@@ -774,7 +814,7 @@ module.exports = {
 
 };
 
-},{}],27:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * Mime Interceptor.
  */
@@ -812,7 +852,7 @@ module.exports = {
 
 };
 
-},{"../util":39}],28:[function(require,module,exports){
+},{"../util":42}],31:[function(require,module,exports){
 /**
  * Timeout Interceptor.
  */
@@ -844,7 +884,7 @@ module.exports = function () {
     };
 };
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -899,7 +939,7 @@ if (window.Vue) {
 
 module.exports = install;
 
-},{"./http":23,"./promise":32,"./resource":33,"./url":34,"./util":39}],30:[function(require,module,exports){
+},{"./http":26,"./promise":35,"./resource":36,"./url":37,"./util":42}],33:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
  */
@@ -1080,7 +1120,7 @@ p.catch = function (onRejected) {
 
 module.exports = Promise;
 
-},{"../util":39}],31:[function(require,module,exports){
+},{"../util":42}],34:[function(require,module,exports){
 /**
  * URL Template v2.0.6 (https://github.com/bramstein/url-template)
  */
@@ -1232,7 +1272,7 @@ exports.encodeReserved = function (str) {
     }).join('');
 };
 
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * Promise adapter.
  */
@@ -1343,7 +1383,7 @@ p.always = function (callback) {
 
 module.exports = Promise;
 
-},{"./lib/promise":30,"./util":39}],33:[function(require,module,exports){
+},{"./lib/promise":33,"./util":42}],36:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -1455,7 +1495,7 @@ Resource.actions = {
 
 module.exports = _.resource = Resource;
 
-},{"./util":39}],34:[function(require,module,exports){
+},{"./util":42}],37:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -1587,7 +1627,7 @@ function serialize(params, obj, scope) {
 
 module.exports = _.url = Url;
 
-},{"../util":39,"./legacy":35,"./query":36,"./root":37,"./template":38}],35:[function(require,module,exports){
+},{"../util":42,"./legacy":38,"./query":39,"./root":40,"./template":41}],38:[function(require,module,exports){
 /**
  * Legacy Transform.
  */
@@ -1635,7 +1675,7 @@ function encodeUriQuery(value, spaces) {
         replace(/%20/g, (spaces ? '%20' : '+'));
 }
 
-},{"../util":39}],36:[function(require,module,exports){
+},{"../util":42}],39:[function(require,module,exports){
 /**
  * Query Parameter Transform.
  */
@@ -1661,7 +1701,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":39}],37:[function(require,module,exports){
+},{"../util":42}],40:[function(require,module,exports){
 /**
  * Root Prefix Transform.
  */
@@ -1679,7 +1719,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":39}],38:[function(require,module,exports){
+},{"../util":42}],41:[function(require,module,exports){
 /**
  * URL Template (RFC 6570) Transform.
  */
@@ -1697,7 +1737,7 @@ module.exports = function (options) {
     return url;
 };
 
-},{"../lib/url-template":31}],39:[function(require,module,exports){
+},{"../lib/url-template":34}],42:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -1821,7 +1861,7 @@ function merge(target, source, deep) {
     }
 }
 
-},{}],40:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /*!
  * vue-router v0.7.11
  * (c) 2016 Evan You
@@ -4471,7 +4511,7 @@ function merge(target, source, deep) {
   return Router;
 
 }));
-},{}],41:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v1.0.16
@@ -14067,5 +14107,5 @@ if (devtools) {
 module.exports = Vue;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":15}]},{},[1])
+},{"_process":18}]},{},[1])
 
