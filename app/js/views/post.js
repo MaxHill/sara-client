@@ -4,12 +4,10 @@
  */
 module.exports = {
     template: require('./post.template.html'),
+    mixins: [require('../mixins/post-resource')],
     data() {
         return {
-            resource: this.$resource('posts{/id}'),
-            loaded: false,
             id: this.$route.params.id,
-            post: {}
         };
     },
     components: {
@@ -17,17 +15,7 @@ module.exports = {
         loader: require('../components/loader')
     },
     ready() {
-        this.getPost();
+        this.getPost(this.id);
     },
-    methods: {
-        getPost() {
-            this.resource.get({id: this.id}).then(function(response) {
-                this.$set('post', response.data.data);
-                this.$set('loaded', true);
-            }, function(response) {
-                console.log('Im awesome');
-                this.$router.go({path: '/posts'});
-            });
-        }
-    },
+    methods: {}
 };

@@ -6,6 +6,9 @@ module.exports = {
         name: 'post',
         component: require('./views/post')
     },
+    'posts/create': {
+        component: require('./views/post-create')
+    },
     '/posts': {
         component: require('./views/posts')
     },

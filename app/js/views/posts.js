@@ -4,31 +4,22 @@
  */
 module.exports = {
     template: require('./posts.template.html'),
+    mixins: [require('../mixins/post-resource')],
     data() {
         return {
-            resource: this.$resource('posts'),
             error: false,
-            loaded: false,
-            message: '',
-            posts: []
+            message: ''
         };
     },
+
     components: {
         blogArticle: require('../components/article'),
         loader: require('../components/loader')
     },
+
     ready() {
         this.getPosts();
     },
-    methods: {
-        getPosts() {
-            this.resource.get().then(function(response) {
-                this.$set('posts', response.data.data);
-                this.$set('loaded', true);
-            }, function (argument) {
-                this.$set('error', true);
-                this.$set('message', 'Sorry no posts yet.');
-            });
-        }
-    }
+
+    methods: {}
 };
