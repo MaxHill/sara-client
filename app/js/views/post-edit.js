@@ -1,9 +1,9 @@
 /**
- * The post view.
+ * The post-update view.
  * @type {Object}
  */
 module.exports = {
-    template: require('./post.template.html'),
+    template: require('./post-edit.template.html'),
     mixins: [require('../mixins/post-resource')],
     data() {
         return {
@@ -11,8 +11,7 @@ module.exports = {
         };
     },
     components: {
-        blogArticle: require('../components/article'),
-        loader: require('../components/loader')
+        trix: require('../components/trix'),
     },
     ready() {
         this.getPost(this.id);

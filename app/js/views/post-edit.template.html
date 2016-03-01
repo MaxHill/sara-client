@@ -1,0 +1,10 @@
+<div>
+    <h2>Update post</h2>
+    <input v-model="post.title" type="text" placeholder="Title">
+    <br>
+    <div v-if="post.content">
+        <trix :content.sync="post.content"></trix>
+    </div>
+    <br>
+    <button @click="updatePost(post.id)">Update</button>
+</div>

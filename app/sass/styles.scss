@@ -8,3 +8,9 @@ body {
 .main-container {
     padding-top: 70px;
 }
+
+// Placeholder for contenteditable
+[contenteditable=true]:empty:before{
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}

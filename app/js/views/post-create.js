@@ -8,5 +8,8 @@ module.exports = {
     data() {
         return {};
     },
+    components: {
+        trix: require('../components/trix'),
+    },
     methods: {}
 };

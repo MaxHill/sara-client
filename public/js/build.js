@@ -33,7 +33,7 @@ var Router = new VueRouter({ history: true });
 Router.map(require('./router.js'));
 Router.start(App, '#app');
 
-},{"./components/nav":6,"./plugins/example":9,"./router.js":10,"vue":47,"vue-resource":35,"vue-router":46}],2:[function(require,module,exports){
+},{"./components/nav":6,"./plugins/example":11,"./router.js":12,"vue":51,"vue-resource":39,"vue-router":50}],2:[function(require,module,exports){
 'use strict';
 
 /**
@@ -46,7 +46,7 @@ module.exports = {
 };
 
 },{"./article.template.html":3}],3:[function(require,module,exports){
-module.exports = "<article>\n    <h1><a v-link=\"{ name: 'post', params: { id: post.id } }\">{{ post.title }}</a></h1>\n    <h5>{{ post.created }}</h5>\n    <p>{{ post.content }}</p>\n</article>\n";
+module.exports = "<article>\n    <h1><a v-link=\"{ name: 'post', params: { id: post.id } }\">{{ post.title }}</a></h1>\n    <h5>{{ post.created }}</h5>\n    <p>{{{ post.content }}}</p>\n</article>\n";
 
 },{}],4:[function(require,module,exports){
 'use strict';
@@ -87,6 +87,37 @@ module.exports = {
 module.exports = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n    <div class=\"container\">\n        <div class=\"navbar-header\">\n            <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            </button>\n            <a class=\"navbar-brand\" v-link=\"{ path: '/' }\">FOREVERLIVING AWESOME!</a>\n        </div>\n\n        <div class=\"collapse navbar-collapse\">\n\n            <ul class=\"nav navbar-nav navbar-right\">\n                <li><a v-link=\"{ path: '/' }\">Home</a></li>\n                <li><a v-link=\"{ path: '/posts' }\">Posts</a></li>\n                <li><a v-link=\"{ path: '/posts/create' }\">Create posts</a></li>\n            </ul>\n        </div><!--/.nav-collapse -->\n    </div>\n</nav>\n";
 
 },{}],8:[function(require,module,exports){
+'use strict';
+
+/**
+ * The trix view.
+ * @type {Object}
+ */
+module.exports = {
+    template: require('./trix.template.html'),
+    props: ['content'],
+    ready: function ready() {
+        var element = document.querySelector('trix-editor');
+        var self = this;
+
+        element.addEventListener('trix-initialize', self.updateContent);
+        element.addEventListener('trix-change', self.updateContent);
+    },
+
+    methods: {
+        updateContent: function updateContent() {
+            var data = document.getElementById('editor');
+            if (typeof data.value !== 'undefined') {
+                this.$set('content', data.value);
+            }
+        }
+    }
+};
+
+},{"./trix.template.html":9}],9:[function(require,module,exports){
+module.exports = "<trix-toolbar id=\"trix-toolbar-1\">\n  <div class=\"button_groups\">\n      <button type=\"button\" class=\"bold\" data-attribute=\"bold\" data-key=\"b\" title=\"Bold\">\n          <img src=\"images/bold.svg\" alt=\"bold\">\n      </button>\n      <button type=\"button\" class=\"italic\" data-attribute=\"italic\" data-key=\"i\" title=\"Italic\">\n          <img src=\"images/italic.svg\" alt=\"italic\">\n      </button>\n      <button type=\"button\" class=\"link\" data-attribute=\"href\" data-action=\"link\" data-key=\"k\" title=\"Link\">\n          <img src=\"images/link.svg\" alt=\"link\">\n      </button>\n      <button type=\"button\" class=\"quote\" data-attribute=\"quote\" title=\"Quote\">\n          <img src=\"images/quote.svg\" alt=\"quote\">\n      </button>\n      <button type=\"button\" class=\"list bullets\" data-attribute=\"bullet\" title=\"Bullets\">\n          <img src=\"images/list-bullet.svg\" alt=\"list-bullet\">\n      </button>\n      <button type=\"button\" class=\"list numbers\" data-attribute=\"number\" title=\"Numbers\">\n          <img src=\"images/list-numbers.svg\" alt=\"list-numbers\">\n      </button>\n  </div>\n\n  <div class=\"dialogs\">\n    <div class=\"dialog link_dialog\" data-attribute=\"href\" data-dialog=\"href\">\n      <div class=\"link_url_fields\">\n        <input type=\"url\" required=\"\" name=\"href\" placeholder=\"Enter a URL…\" disabled=\"disabled\">\n        <div class=\"button_group\">\n          <input type=\"button\" value=\"Link\" data-method=\"setAttribute\">\n          <input type=\"button\" value=\"Unlink\" data-method=\"removeAttribute\">\n        </div>\n      </div>\n    </div>\n  </div>\n</trix-toolbar>\n\n<article>\n  <input v-model=\"content\" id=\"editor\" type=\"hidden\" name=\"content\">\n  <trix-editor v-el=\"editor\" toolbar=\"trix-toolbar-1\" input=\"editor\" placeholder=\"Write here..\"></trix-editor>\n</article>\n";
+
+},{}],10:[function(require,module,exports){
 'use strict';
 
 /**
@@ -133,11 +164,19 @@ module.exports = {
             }, function (response) {
                 alert('error');
             });
+        },
+        updatePost: function updatePost(id) {
+            // save item
+            this.postsResource.update({ id: id }, this.post).then(function (response) {
+                alert('Updated');
+            }, function (response) {
+                alert('error');
+            });
         }
     }
 };
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 /**
@@ -155,7 +194,7 @@ function example(Vue, options) {
 
 module.exports = example;
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -165,6 +204,10 @@ module.exports = {
     'posts/:id': {
         name: 'post',
         component: require('./views/post')
+    },
+    'posts/:id/edit': {
+        name: 'post-update',
+        component: require('./views/post-update')
     },
     'posts/create': {
         component: require('./views/post-create')
@@ -177,7 +220,7 @@ module.exports = {
     }
 };
 
-},{"./views/404":11,"./views/post":15,"./views/post-create":13,"./views/posts":17,"./views/welcome":19}],11:[function(require,module,exports){
+},{"./views/404":13,"./views/post":19,"./views/post-create":15,"./views/post-update":17,"./views/posts":21,"./views/welcome":23}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -191,10 +234,10 @@ module.exports = {
     }
 };
 
-},{"./404.template.html":12}],12:[function(require,module,exports){
+},{"./404.template.html":14}],14:[function(require,module,exports){
 module.exports = "<center><h2>404 - Not found</h2></center>\n";
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /**
@@ -208,13 +251,45 @@ module.exports = {
         return {};
     },
 
+    components: {
+        trix: require('../components/trix')
+    },
     methods: {}
 };
 
-},{"../mixins/post-resource":8,"./post-create.template.html":14}],14:[function(require,module,exports){
-module.exports = "<div>\n<h2>Post-Create view</h2>\n<input v-model=\"newPost.title\" type=\"text\" placeholder=\"Title\">\n<br>\n<textarea v-model=\"newPost.content\" name=\"content\" id=\"\" cols=\"30\" rows=\"10\" placeholder=\"Content\"></textarea>\n<br>\n<button @click=\"createPost()\">Spara</button>\n</div>\n";
+},{"../components/trix":8,"../mixins/post-resource":10,"./post-create.template.html":16}],16:[function(require,module,exports){
+module.exports = "<div>\n    <h2>Create post</h2>\n    <input v-model=\"newPost.title\" type=\"text\" placeholder=\"Title\">\n    <br>\n    <trix :content.sync=\"newPost.content\"></trix>\n    <br>\n    <button @click=\"createPost()\">Spara</button>\n</div>\n";
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
+'use strict';
+
+/**
+ * The post-update view.
+ * @type {Object}
+ */
+module.exports = {
+    template: require('./post-update.template.html'),
+    mixins: [require('../mixins/post-resource')],
+    data: function data() {
+        return {
+            id: this.$route.params.id
+        };
+    },
+
+    components: {
+        trix: require('../components/trix')
+    },
+    ready: function ready() {
+        this.getPost(this.id);
+    },
+
+    methods: {}
+};
+
+},{"../components/trix":8,"../mixins/post-resource":10,"./post-update.template.html":18}],18:[function(require,module,exports){
+module.exports = "<div>\n    <h2>Update post</h2>\n    <input v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n    <br>\n    <div v-if=\"post.content\">\n        <trix :content.sync=\"post.content\"></trix>\n    </div>\n    <br>\n    <button @click=\"updatePost(post.id)\">Update</button>\n</div>\n";
+
+},{}],19:[function(require,module,exports){
 'use strict';
 
 /**
@@ -241,10 +316,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":8,"./post.template.html":16}],16:[function(require,module,exports){
+},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":10,"./post.template.html":20}],20:[function(require,module,exports){
 module.exports = "<div>\n    <loader v-if=\"!loaded\">post</loader>\n    <blog-article v-if=\"loaded\" :post.sync=\"post\"></blog-article>\n</div>\n";
 
-},{}],17:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 /**
@@ -275,10 +350,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":8,"./posts.template.html":18}],18:[function(require,module,exports){
+},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":10,"./posts.template.html":22}],22:[function(require,module,exports){
 module.exports = "<loader v-if=\"!loaded\">posts</loader>\n\n<div v-if=\"loaded\">\n    <div v-if=\"error\">\n        <h3>{{message}}</h3>\n    </div>\n    <section v-for=\"post in posts\">\n        <blog-article :post.sync=\"post\"></blog-article>\n    </section>\n\n</div>\n";
 
-},{}],19:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -290,10 +365,10 @@ module.exports = {
   components: {}
 };
 
-},{"./welcome.template.html":20}],20:[function(require,module,exports){
+},{"./welcome.template.html":24}],24:[function(require,module,exports){
 module.exports = "<div>\n<h1>Hello</h1>\n    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda dolore distinctio officiis eius consequuntur aperiam neque ex voluptates odio repellat deserunt eos consequatur at amet tempora sequi, non sapiente.</p>\n</div>\n";
 
-},{}],21:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -386,7 +461,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],22:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /**
  * Before Interceptor.
  */
@@ -406,7 +481,7 @@ module.exports = {
 
 };
 
-},{"../util":45}],23:[function(require,module,exports){
+},{"../util":49}],27:[function(require,module,exports){
 /**
  * Base client.
  */
@@ -473,7 +548,7 @@ function parseHeaders(str) {
     return headers;
 }
 
-},{"../../promise":38,"../../util":45,"./xhr":26}],24:[function(require,module,exports){
+},{"../../promise":42,"../../util":49,"./xhr":30}],28:[function(require,module,exports){
 /**
  * JSONP client.
  */
@@ -523,7 +598,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":38,"../../util":45}],25:[function(require,module,exports){
+},{"../../promise":42,"../../util":49}],29:[function(require,module,exports){
 /**
  * XDomain client (Internet Explorer).
  */
@@ -562,7 +637,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":38,"../../util":45}],26:[function(require,module,exports){
+},{"../../promise":42,"../../util":49}],30:[function(require,module,exports){
 /**
  * XMLHttp client.
  */
@@ -614,7 +689,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":38,"../../util":45}],27:[function(require,module,exports){
+},{"../../promise":42,"../../util":49}],31:[function(require,module,exports){
 /**
  * CORS Interceptor.
  */
@@ -653,7 +728,7 @@ function crossOrigin(request) {
     return (requestUrl.protocol !== originUrl.protocol || requestUrl.host !== originUrl.host);
 }
 
-},{"../util":45,"./client/xdr":25}],28:[function(require,module,exports){
+},{"../util":49,"./client/xdr":29}],32:[function(require,module,exports){
 /**
  * Header Interceptor.
  */
@@ -681,7 +756,7 @@ module.exports = {
 
 };
 
-},{"../util":45}],29:[function(require,module,exports){
+},{"../util":49}],33:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -781,7 +856,7 @@ Http.headers = {
 
 module.exports = _.http = Http;
 
-},{"../promise":38,"../util":45,"./before":22,"./client":23,"./cors":27,"./header":28,"./interceptor":30,"./jsonp":31,"./method":32,"./mime":33,"./timeout":34}],30:[function(require,module,exports){
+},{"../promise":42,"../util":49,"./before":26,"./client":27,"./cors":31,"./header":32,"./interceptor":34,"./jsonp":35,"./method":36,"./mime":37,"./timeout":38}],34:[function(require,module,exports){
 /**
  * Interceptor factory.
  */
@@ -828,7 +903,7 @@ function when(value, fulfilled, rejected) {
     return promise.then(fulfilled, rejected);
 }
 
-},{"../promise":38,"../util":45}],31:[function(require,module,exports){
+},{"../promise":42,"../util":49}],35:[function(require,module,exports){
 /**
  * JSONP Interceptor.
  */
@@ -848,7 +923,7 @@ module.exports = {
 
 };
 
-},{"./client/jsonp":24}],32:[function(require,module,exports){
+},{"./client/jsonp":28}],36:[function(require,module,exports){
 /**
  * HTTP method override Interceptor.
  */
@@ -867,7 +942,7 @@ module.exports = {
 
 };
 
-},{}],33:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * Mime Interceptor.
  */
@@ -905,7 +980,7 @@ module.exports = {
 
 };
 
-},{"../util":45}],34:[function(require,module,exports){
+},{"../util":49}],38:[function(require,module,exports){
 /**
  * Timeout Interceptor.
  */
@@ -937,7 +1012,7 @@ module.exports = function () {
     };
 };
 
-},{}],35:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -992,7 +1067,7 @@ if (window.Vue) {
 
 module.exports = install;
 
-},{"./http":29,"./promise":38,"./resource":39,"./url":40,"./util":45}],36:[function(require,module,exports){
+},{"./http":33,"./promise":42,"./resource":43,"./url":44,"./util":49}],40:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
  */
@@ -1173,7 +1248,7 @@ p.catch = function (onRejected) {
 
 module.exports = Promise;
 
-},{"../util":45}],37:[function(require,module,exports){
+},{"../util":49}],41:[function(require,module,exports){
 /**
  * URL Template v2.0.6 (https://github.com/bramstein/url-template)
  */
@@ -1325,7 +1400,7 @@ exports.encodeReserved = function (str) {
     }).join('');
 };
 
-},{}],38:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /**
  * Promise adapter.
  */
@@ -1436,7 +1511,7 @@ p.always = function (callback) {
 
 module.exports = Promise;
 
-},{"./lib/promise":36,"./util":45}],39:[function(require,module,exports){
+},{"./lib/promise":40,"./util":49}],43:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -1548,7 +1623,7 @@ Resource.actions = {
 
 module.exports = _.resource = Resource;
 
-},{"./util":45}],40:[function(require,module,exports){
+},{"./util":49}],44:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -1680,7 +1755,7 @@ function serialize(params, obj, scope) {
 
 module.exports = _.url = Url;
 
-},{"../util":45,"./legacy":41,"./query":42,"./root":43,"./template":44}],41:[function(require,module,exports){
+},{"../util":49,"./legacy":45,"./query":46,"./root":47,"./template":48}],45:[function(require,module,exports){
 /**
  * Legacy Transform.
  */
@@ -1728,7 +1803,7 @@ function encodeUriQuery(value, spaces) {
         replace(/%20/g, (spaces ? '%20' : '+'));
 }
 
-},{"../util":45}],42:[function(require,module,exports){
+},{"../util":49}],46:[function(require,module,exports){
 /**
  * Query Parameter Transform.
  */
@@ -1754,7 +1829,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":45}],43:[function(require,module,exports){
+},{"../util":49}],47:[function(require,module,exports){
 /**
  * Root Prefix Transform.
  */
@@ -1772,7 +1847,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":45}],44:[function(require,module,exports){
+},{"../util":49}],48:[function(require,module,exports){
 /**
  * URL Template (RFC 6570) Transform.
  */
@@ -1790,7 +1865,7 @@ module.exports = function (options) {
     return url;
 };
 
-},{"../lib/url-template":37}],45:[function(require,module,exports){
+},{"../lib/url-template":41}],49:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -1914,7 +1989,7 @@ function merge(target, source, deep) {
     }
 }
 
-},{}],46:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /*!
  * vue-router v0.7.11
  * (c) 2016 Evan You
@@ -4564,7 +4639,7 @@ function merge(target, source, deep) {
   return Router;
 
 }));
-},{}],47:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v1.0.16
@@ -14160,5 +14235,5 @@ if (devtools) {
 module.exports = Vue;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":21}]},{},[1])
+},{"_process":25}]},{},[1])
 

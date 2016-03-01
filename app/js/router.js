@@ -6,6 +6,10 @@ module.exports = {
         name: 'post',
         component: require('./views/post')
     },
+    'posts/:id/edit': {
+        name: 'post-edit',
+        component: require('./views/post-edit')
+    },
     'posts/create': {
         component: require('./views/post-create')
     },

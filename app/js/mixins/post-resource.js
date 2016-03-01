@@ -38,10 +38,19 @@ module.exports = {
 
         createPost() {
             // save item
-            this.postsResource.save(this.newPost).then(function (response) {
-              alert('Created');
-            }, function (response) {
-              alert('error');
+            this.postsResource.save(this.newPost).then(function(response) {
+                alert('Created');
+            }, function(response) {
+                alert('error');
+            });
+        },
+
+        updatePost(id) {
+            // save item
+            this.postsResource.update({id: id},this.post).then(function(response) {
+                alert('Updated');
+            }, function(response) {
+                alert('error');
             });
         }
     },
