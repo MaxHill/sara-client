@@ -7,6 +7,8 @@ module.exports = {
     mixins: [require('../mixins/post-resource')],
     data() {
         return {
+            posts: [],
+            loading: true,
             error: false,
             message: ''
         };

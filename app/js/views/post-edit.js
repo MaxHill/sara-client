@@ -7,14 +7,17 @@ module.exports = {
     mixins: [require('../mixins/post-resource')],
     data() {
         return {
+            post: {},
+            loading: true,
             id: this.$route.params.id
         };
     },
     components: {
         trix: require('../components/trix'),
+        loader: require('../components/loader')
     },
     ready() {
-        this.getPost(this.id);
+        this. post = this.getPost(this.id);
     },
     methods: {}
 };

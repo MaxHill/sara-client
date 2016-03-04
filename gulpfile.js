@@ -39,11 +39,11 @@ function compile(watch) {
             .pipe(buffer())
             .pipe(sourcemaps.init({loadMaps: true}))
             .pipe(gulp.dest('./public/js'))
-            .pipe(uglify({
-                compress: {
-                    negate_iife: false
-                }
-            }))
+            // .pipe(uglify({
+            //     compress: {
+            //         negate_iife: false
+            //     }
+            // }))
             .pipe(rename({suffix: '.min'}))
             .pipe(gulp.dest('./public/js'))
             .pipe(gzip({ preExtension: 'gz' }))
@@ -129,8 +129,7 @@ gulp.task('webserver', function() {
         fallback: 'index.html',
         livereload: true,
         directoryListing: false,
-        open: true,
-        port: 9023
+        open: true
     }));
 });
 

@@ -1,8 +1,8 @@
 <div>
     <h2>Create post</h2>
-    <input v-model="newPost.title" type="text" placeholder="Title">
+    <input v-model="post.title" type="text" placeholder="Title">
     <br>
-    <trix :content.sync="newPost.content"></trix>
+    <trix :content.sync="post.content"></trix>
     <br>
-    <button @click="createPost()">Spara</button>
+    <button @click="createPost(post)">Spara</button>
 </div>
