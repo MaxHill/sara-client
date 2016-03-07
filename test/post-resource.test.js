@@ -1,15 +1,12 @@
 var Help = require('./test-helper');
 var PostResource;
+var Vue;
 
-describe('Post-Resource', () => {
+describe('The Post-Resource', () => {
 
     beforeEach(() => {
         var mixin = require('../app/js/mixins/post-resource');
         PostResource = Help.bootstrapMixin(mixin);
-    });
-
-    it('should exist', () => {
-        expect(typeof PostResource.getPosts).toBe('function');
     });
 
     it('should know what path to use', () => {
@@ -18,18 +15,86 @@ describe('Post-Resource', () => {
     });
 
     it('should be able to get all posts', () => {
+        spyOn(PostResource.resource, 'get').and.callThrough();
+
+        PostResource.getPosts();
+
         expect(typeof PostResource.getPosts).toBe('function');
+        expect(PostResource.resource.get)
+            .toHaveBeenCalledWith({}, {include: []});
     });
 
-    it('should be able to get one post', () => {
+    it('should be able to iclude photos when getting all posts', () => {
+        spyOn(PostResource.resource, 'get').and.callThrough();
+
+        PostResource.getPosts(['photos']);
+
+        expect(PostResource.resource.get)
+            .toHaveBeenCalledWith({}, {include: ['photos']});
+    });
+
+    it('should be able to get a post', () => {
+        spyOn(PostResource.resource, 'get').and.callThrough();
+
+        PostResource.getPost(1);
+
         expect(typeof PostResource.getPost).toBe('function');
+        expect(PostResource.resource.get)
+            .toHaveBeenCalledWith({id: 1}, {include: []});
+    });
+
+    it('should be able to iclude photos when getting a post', () => {
+        spyOn(PostResource.resource, 'get').and.callThrough();
+
+        PostResource.getPost(1, ['photos']);
+
+        expect(typeof PostResource.getPost).toBe('function');
+        expect(PostResource.resource.get)
+            .toHaveBeenCalledWith({id: 1}, {include: ['photos']});
     });
 
     it('should be able to create a post', () => {
+        spyOn(PostResource.resource, 'save').and.callThrough();
+        PostResource.post = {data: 'mockdata'};
+
+        PostResource.createPost();
+
         expect(typeof PostResource.createPost).toBe('function');
+        expect(PostResource.resource.save)
+            .toHaveBeenCalledWith({data: 'mockdata'});
+    });
+
+    it('should be able to create an embryo post', () => {
+        spyOn(PostResource, '$http').and.callThrough();
+        PostResource.post = {data: 'mockdata'};
+
+        PostResource.createEmbryoPost();
+
+        expect(typeof PostResource.createEmbryoPost).toBe('function');
+        expect(PostResource.$http)
+            .toHaveBeenCalledWith({url: 'posts/embryo', method: 'POST'});
     });
 
     it('should be able to update a post', () => {
+        spyOn(PostResource.resource, 'update').and.callThrough();
+        PostResource.post = {data: 'mockdata'};
+
+        PostResource.updatePost(1);
+
         expect(typeof PostResource.updatePost).toBe('function');
+        expect(PostResource.resource.update)
+            .toHaveBeenCalledWith({id: 1},{data: 'mockdata'});
+    });
+
+    it('should have a singular variable "post"', () => {
+        expect(PostResource.post).toBeDefined();
+    });
+
+    it('should have a plural variable "posts"', () => {
+        expect(PostResource.posts).toBeDefined();
+    });
+
+    it('should have a plural variable "loading"', () => {
+        expect(PostResource.loading).toBeDefined();
     });
 });

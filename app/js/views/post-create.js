@@ -9,7 +9,7 @@ module.exports = {
         return {};
     },
     ready() {
-      this.createEmbryoPost();
+        this.createEmbryoPost();
     },
     components: {
         trix: require('../components/trix'),

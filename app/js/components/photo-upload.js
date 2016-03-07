@@ -1,13 +1,13 @@
 var Dropzone = require('dropzone');
 module.exports = {
     template: require('./photo-upload.template.html'),
-    props:['photos', 'photoPath'],
+    props: ['photos', 'photoPath'],
     mixins: [require('../mixins/photo-resource')],
     data: function() {
         return {
             token: 'photo-upload.js - ADD TOKEN HERE',
             imageUpload: null
-        }
+        };
     },
     ready: function() {
         var self = this;
@@ -20,37 +20,50 @@ module.exports = {
             thumbnailHeight: 1000,
             acceptedFiles: '.jpg, .jpeg, .png, .gif',
             init: function() {
-                    var currentPhotos = self.photos;
-                if ( typeof(currentPhotos) !== 'undefined' && currentPhotos.length !== 0 ) {
+                var currentPhotos = self.photos;
+                if (
+                    typeof(currentPhotos) !== 'undefined' &&
+                    currentPhotos.length !== 0
+                ) {
                     currentPhotos.forEach((photo) => {
-                        var mockFile = { name: photo.name, size: 12345 };
+                        var mockFile = {name: photo.name, size: 12345};
+                        var url = self.$http.options.root + '/' + photo.path;
                         this.options.addedfile.call(this, mockFile);
-                        this.options.thumbnail.call(this, mockFile, self.$http.options.root + '/' + photo.path);
+                        this.options.thumbnail.call(this, mockFile, url);
                         mockFile.previewElement.classList.add('dz-success');
                         mockFile.previewElement.classList.add('dz-complete');
                         this.element
                             .getElementsByClassName('PhotoUpload__message')[0]
                             .classList.add('PhotoUpload__message--hidden');
-                        this.element.getElementsByClassName('PhotoUpload__progress')[0].classList.add('PhotoUpload__progress--hidden');
+                        this.element.
+                            getElementsByClassName('PhotoUpload__progress')[0]
+                            .classList.add('PhotoUpload__progress--hidden');
                     });
                 }
             },
             removedfile: function(file) {
                 self.photos.every((photo) => {
-                    if ( photo.name == file.name ) {
+                    if (photo.name == file.name) {
                         self.deletePhoto(photo.id);
                         return false;
                     }
                     return true;
                 });
             },
+            // jscs:disable
             previewTemplate: `
             <div class='PhotoUpload__preview'>
-                <span data-dz-remove><img class="Icon  Icon__small PhotoUpload__remove" src="/images/icons/ui/circle-remove.svg"></span>
+                <span data-dz-remove>
+                    <img class="Icon  Icon__small PhotoUpload__remove" src="/images/icons/ui/circle-remove.svg">
+                </span>
                 <img data-dz-thumbnail class='PhotoUpload__image'>
-                <div class="PhotoUpload__progress dz-progress"><div class="PhotoUpload__uploaded dz-upload" data-dz-uploadprogress></div></div>
+                <div class="PhotoUpload__progress dz-progress">
+                    <div class="PhotoUpload__uploaded dz-upload" data-dz-uploadprogress>
+                    </div>
+                </div>
                 <div data-dz-errormessage></div>
             </div>`
+            // jscs:enable
         });
         this.registerListners();
     },
@@ -68,8 +81,10 @@ module.exports = {
             this.errorListner();
         },
         successListner: function() {
-            this.imageUpload.on("success", function() {
-                this.element.getElementsByClassName('PhotoUpload__progress')[0].classList.add('PhotoUpload__progress--hidden');
+            this.imageUpload.on('success', function() {
+                this.element.
+                    getElementsByClassName('PhotoUpload__progress')[0].
+                    classList.add('PhotoUpload__progress--hidden');
             });
         },
         removeListner: function() {
@@ -89,25 +104,33 @@ module.exports = {
         dragLeaveListner: function() {
             this.imageUpload.on('dragleave', function() {
                 this.element.classList.remove('Avatar--over');
-                this.element.getElementsByClassName('PhotoUpload__icon')[0].classList.remove('PhotoUpload__icon--over');
+                this.element.
+                    getElementsByClassName('PhotoUpload__icon')[0].
+                    classList.remove('PhotoUpload__icon--over');
             });
         },
         dragOverListner: function() {
             this.imageUpload.on('dragover', function() {
                 this.element.classList.add('Avatar--over');
-                this.element.getElementsByClassName('PhotoUpload__icon')[0].classList.add('PhotoUpload__icon--over');
+                this.element.
+                    getElementsByClassName('PhotoUpload__icon')[0].
+                    classList.add('PhotoUpload__icon--over');
             });
         },
         dragEnterListner: function() {
             this.imageUpload.on('dragenter', function() {
                 this.element.classList.add('Avatar--over');
-                this.element.getElementsByClassName('PhotoUpload__icon')[0].classList.add('PhotoUpload__icon--over');
+                this.element.
+                    getElementsByClassName('PhotoUpload__icon')[0].
+                    classList.add('PhotoUpload__icon--over');
             });
         },
         dragEndListner: function() {
             this.imageUpload.on('dragend', function() {
                 this.element.classList.remove('Avatar--over');
-                this.element.getElementsByClassName('PhotoUpload__icon')[0].classList.remove('PhotoUpload__icon--over');
+                this.element.
+                    getElementsByClassName('PhotoUpload__icon')[0].
+                    classList.remove('PhotoUpload__icon--over');
             });
         },
         maxFileListner: function() {
@@ -120,10 +143,15 @@ module.exports = {
             this.imageUpload.on('error', function(file, respons) {
                 var errors = '';
                 for (var i = 0; i < response.photo.length; i++) {
-                    errors += `<li>`+ response.photo[i]   +`</li>`;
+                    errors += `<li>` + response.photo[i]   + `</li>`;
                 }
-                file.previewElement.classList.add("dz-error");
-                file.previewElement.querySelector("[data-dz-errormessage]").innerHTML = `<ul class="PhotoUpload__error"><li><b>Error:</b></li>` + errors + `</ul>`;
+                file.previewElement.classList.add('dz-error');
+                file.previewElement.
+                    querySelector('[data-dz-errormessage]').
+                    innerHTML = `
+                    <ul class="PhotoUpload__error">
+                        <li><b>Error:</b></li>${errors}
+                    </ul>`;
             });
         }
     }

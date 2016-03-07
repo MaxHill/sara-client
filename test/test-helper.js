@@ -1,9 +1,15 @@
 var Vue = require('../app/js/vue-register');
+const proxyquire = require('proxyquireify')(require);
+
+var Vue = proxyquire('../app/js/vue-register', {
+    'vue-resource': require('./mocks/resource')
+});
 
 module.exports = {
 
     /**
      * Hook up a component with a vue instance.
+     *
      * @param  {object} component
      * @return {object}
      */
@@ -19,6 +25,7 @@ module.exports = {
 
     /**
      * Hook up a mixin with a component and vue instance.
+     *
      * @param  {object} mixin
      * @return {object}
      */
