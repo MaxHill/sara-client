@@ -7,7 +7,7 @@
 
 function example(Vue, options) {
     Vue.prototype.$pluginSay = function() {
-        console.log('I\'m a plugin');
+        console.log('I\'m a plugin Remove me!');
     };
 }
 

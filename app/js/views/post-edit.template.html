@@ -1,9 +1,11 @@
 <div>
     <h2>Update post</h2>
 
-    <loader v-if="!loaded">post</loader>
+    <loader v-if="loading">post</loader>
 
-    <div v-if="loaded">
+    <div v-if="!loading">
+
+        <photo-upload :photos.sync="post.photos.data" :path="post.id + '/photos'"></photo-upload>
         <input v-model="post.title" type="text" placeholder="Title">
         <br>
         <div v-if="post.content">

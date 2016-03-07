@@ -1,4 +1,4 @@
 <div>
-    <loader v-if="!loaded">post</loader>
-    <blog-article v-if="loaded" :post.sync="post"></blog-article>
+    <loader v-if="loading">post</loader>
+    <blog-article v-if="!loading" :post.sync="post"></blog-article>
 </div>

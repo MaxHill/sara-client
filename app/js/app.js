@@ -1,5 +1,7 @@
 var Vue = require('./vue-register');
 
+Vue.http.options.root = 'http://sara.app';
+
 /**
  * Vue root instance
  */

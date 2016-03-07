@@ -6,12 +6,7 @@ module.exports = {
     template: require('./posts.template.html'),
     mixins: [require('../mixins/post-resource')],
     data() {
-        return {
-            posts: [],
-            loading: true,
-            error: false,
-            message: ''
-        };
+        return {};
     },
 
     components: {
@@ -20,7 +15,7 @@ module.exports = {
     },
 
     ready() {
-        this.getPosts();
+        this.getPosts(['photos']);
     },
 
     methods: {}

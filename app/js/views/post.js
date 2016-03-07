@@ -8,8 +8,6 @@ module.exports = {
 
     data() {
         return {
-            post: {},
-            loaded: false,
             id: this.$route.params.id
         };
     },
@@ -20,7 +18,7 @@ module.exports = {
     },
 
     ready() {
-        this.post = this.getPost(this.id);
+        this.getPost(this.id, ['photos']);
     },
     methods: {}
 };
