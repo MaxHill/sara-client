@@ -3,7 +3,7 @@
     <loader v-if="loading">post</loader>
 
     <div v-if="!loading">
-        <photo-upload :photos.sync="post.photos.data" :path="post.id + '/photos'"></photo-upload>
+        <photo-upload :photos.sync="post.photos.data" :uploadpath="post.id + '/photos'"></photo-upload>
         <input v-model="post.title" type="text" placeholder="Title">
         <br>
         <trix :content.sync="post.content"></trix>

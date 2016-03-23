@@ -1,7 +1,7 @@
 var Dropzone = require('dropzone');
 module.exports = {
     template: require('./photo-upload.template.html'),
-    props: ['photos', 'photoPath'],
+    props: ['photos', 'uploadpath'],
     mixins: [require('../mixins/photo-resource')],
     data: function() {
         return {
@@ -12,7 +12,7 @@ module.exports = {
     ready: function() {
         var self = this;
         this.imageUpload = new Dropzone('.PhotoUpload', {
-            url: this.$http.options.root + '/' + this.photoPath,
+            url: this.$http.options.root + '/' + this.uploadpath,
             maxFiles: 10,
             paramName: 'photo',
             maxFilesize: 3,
@@ -88,7 +88,8 @@ module.exports = {
             });
         },
         removeListner: function() {
-            this.imageUpload.on('removedfile', function() {
+            this.imageUpload.on('removedfile', function($file, $fileList) {
+                console.log('photo-upload.js', $file);
                 this.element
                     .getElementsByClassName('PhotoUpload__message')[0]
                     .classList.remove('PhotoUpload__message--hidden');

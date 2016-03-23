@@ -13,7 +13,7 @@ module.exports = {
     components: {
         trix: require('../components/trix'),
         loader: require('../components/loader'),
-        photoUpload: require('../components/photo-upload')
+        photoUpload: require('../components/uploader')
     },
     ready() {
         this.getPost(this.id, ['photos']);
