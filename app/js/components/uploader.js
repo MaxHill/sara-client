@@ -24,6 +24,7 @@ module.exports = {
                 thumbnailHeight: 250,
                 acceptedFiles: '.jpg, .jpeg, .png, .gif',
                 removedfile: this.delete,
+                success: this.addToPhotos,
                 // jscs:disable
                 previewTemplate: `
                     <div class='Uploader__preview'>
@@ -71,8 +72,35 @@ module.exports = {
                 );
             });
         },
-        delete(photo) {
-            console.log('uploader.js', 'DELETE', photo);
+        delete(file) {
+            this.photos.forEach((photo, index) => {
+                let fileInfo = file;
+                if (file.xhr) {
+                    fileInfo = JSON.parse(file.xhr.response).data;
+                }
+
+                if (fileInfo.name == photo.name) {
+                    let self = this;
+                    this.$http({
+                        url: 'photos/' + photo.id,
+                        method: 'DELETE'
+                    }).then(() => {
+                        self.photos.splice(index, 1);
+                        file.
+                            previewElement.
+                            parentNode.
+                            removeChild(file.previewElement);
+                    }, () => {
+                        //error
+                    });
+                }
+            });
+        },
+        addToPhotos(file, response) {
+            if (file.status !== 'success') {
+                return false;
+            }
+            this.photos.push(response.data);
         }
     }
 };

@@ -17,8 +17,8 @@ module.exports = (Vue, options) => {
     };
     Vue.prototype.$http = function() {
         return {
-            then() {
-                return {then() {return true;}};
+            then(func1, func2) {
+                return func1({data: 'test'});
             }
         };
     };

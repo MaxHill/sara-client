@@ -271,6 +271,7 @@ module.exports = {
                 thumbnailHeight: 250,
                 acceptedFiles: '.jpg, .jpeg, .png, .gif',
                 removedfile: this.delete,
+                success: this.addToPhotos,
                 // jscs:disable
                 previewTemplate: '\n                    <div class=\'Uploader__preview\'>\n                        <span data-dz-remove>\n                            <img class="Icon  Icon__small Uploader__remove" src="/images/icons/ui/circle-remove.svg">\n                        </span>\n                        <img data-dz-thumbnail class=\'Uploader__image\'>\n                        <div class="Uploader__progress dz-progress">\n                            <div class="Uploader__uploaded dz-upload" data-dz-uploadprogress>\n                            </div>\n                        </div>\n                        <div data-dz-errormessage></div>\n                    </div>'
                 // jscs:enable
@@ -301,8 +302,36 @@ module.exports = {
                 self.uploader.options.thumbnail.call(self.uploader, mockFile, path);
             });
         },
-        delete: function _delete(photo) {
-            console.log('uploader.js', 'DELETE', photo);
+        delete: function _delete(file) {
+            var _this = this;
+
+            this.photos.forEach(function (photo, index) {
+                var fileInfo = file;
+                if (file.xhr) {
+                    fileInfo = JSON.parse(file.xhr.response).data;
+                }
+
+                if (fileInfo.name == photo.name) {
+                    (function () {
+                        var self = _this;
+                        _this.$http({
+                            url: 'photos/' + photo.id,
+                            method: 'DELETE'
+                        }).then(function () {
+                            self.photos.splice(index, 1);
+                            file.previewElement.parentNode.removeChild(file.previewElement);
+                        }, function () {
+                            //error
+                        });
+                    })();
+                }
+            });
+        },
+        addToPhotos: function addToPhotos(file, response) {
+            if (file.status !== 'success') {
+                return false;
+            }
+            this.photos.push(response.data);
         }
     }
 };
