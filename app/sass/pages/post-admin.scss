@@ -1,0 +1,30 @@
+.Post-admin-page {
+    width: 100%;
+    float: left;
+    display: flex;
+    .Post-sidebar {
+        flex:1;
+    }
+    .Post-edit {
+        flex:1;
+    }
+    .Post-edit--small {
+        display:none;
+    }
+}
+
+
+@media (min-width: $break-medium) {
+    .Post-admin-page {
+        .Post-sidebar {
+            border-right: 1px solid $gray;
+            max-width: 300px;
+        }
+        .Post-sidebar--small {
+            display:block;
+        }
+        .Post-edit--small {
+            display:block;
+        }
+    }
+}

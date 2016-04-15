@@ -1,0 +1,40 @@
+.Post-sidebar {
+    float: left;
+}
+
+.Post-sidebar--small {
+    display: none;
+}
+
+.Post-sidebar__list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.Post-sidebar__item {
+    list-style: none;
+    height: 4rem;
+    padding: 10px;
+    border-bottom: 1px solid $gray;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: $transition-medium;
+}
+
+.Post-sidebar__item--active {
+    border-left: 1px solid $success-color;
+}
+
+.Post-sidebar__item:hover {
+    padding: 10px 8px 10px 12px;
+}
+
+.Post-sidebar__title {
+    color: $dark-gray;
+}
+.Post-sidebar__icon {
+    float: right;
+}

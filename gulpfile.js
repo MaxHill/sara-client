@@ -127,6 +127,7 @@ gulp.task('webserver', function() {
     gulp.src('public')
     .pipe(webserver({
         fallback: 'index.html',
+        host: '0.0.0.0',
         port:8080,
         livereload: true,
         directoryListing: false,

@@ -22,8 +22,6 @@ describe('Uploader', () => {
             url: '/',
             paramName: 'photo',
             maxFilesize: 4,
-            thumbnailWidth: 250,
-            thumbnailHeight: 250,
             removedfile: Uploader.delete,
             success: Uploader.addToPhotos,
             acceptedFiles: '.jpg, .jpeg, .png, .gif',

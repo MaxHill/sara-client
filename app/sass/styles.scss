@@ -1,16 +1,16 @@
-body {
-    background: #efefef;
-    color: #252525;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 110%;
-}
+@import 'base/variables';
+@import 'base/reset';
+@import 'base/presets';
+@import 'base/typography';
+@import 'base/form';
 
-.main-container {
-    padding-top: 70px;
-}
+// Layout
+@import 'pages/post-admin';
 
-// Placeholder for contenteditable
-[contenteditable=true]:empty:before{
-  content: attr(placeholder);
-  display: block; /* For Firefox */
-}
+// Components
+@import 'components/icon';
+@import 'components/form';
+@import 'components/button';
+@import 'components/nav';
+@import 'components/post-sidebar';
+@import 'components/post-edit';

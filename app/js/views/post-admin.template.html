@@ -1,0 +1,10 @@
+<div class="Post-admin-page">
+    <post-sidebar
+        v-bind:class="{'Post-sidebar--small': editing}"
+        :posts.sync="posts"
+        ></post-sidebar>
+    <post-edit
+        v-bind:class="{'Post-edit--small': !editing}"
+        :post.sync="post"
+        ></post-edit>
+</div>

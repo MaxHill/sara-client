@@ -1,0 +1,69 @@
+.Nav {
+    width: 100%;
+    display: block;
+    float: left;
+    margin: 0;
+    border-bottom: 1px solid $gray;
+}
+
+.Nav__items {
+    display: block;
+
+    margin:0;
+    padding:0;
+    display: flex;
+    height: 3rem;
+    @media (min-width: 600px){
+        height: 2.2rem;
+    }
+}
+
+.Nav__item {
+    flex: 1;
+    list-style: none;
+    text-decoration: none;
+    float: left;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.Nav__link {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: $dark-gray;
+}
+
+.Nav__link:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: $success-color;
+    opacity: 0;
+    transition: $transition-fast-linear;
+}
+
+.Nav__link--active:after,
+.Nav__link:hover {
+    opacity: 1;
+}
+
+.Nav__icon {
+    width: 25px;
+    height: 25px;
+}
+
+
+.Nav__text {
+    display: none;
+}

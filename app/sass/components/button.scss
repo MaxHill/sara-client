@@ -1,0 +1,26 @@
+.Button,
+button {
+    background: $brand-color;
+    color: $white;
+    text-decoration: none;
+    outline: 0;
+    border: rgba(255,255,255, 0) solid 1px;
+    border-radius: 4px;
+    padding: .3rem .6rem;
+    box-sizing: border-box;
+}
+
+.Button--medium {
+    font-size: .9rem;
+    padding: .2rem .4rem;
+}
+
+.Button--small {
+    font-size: .8rem;
+    padding: .2rem .4rem;
+}
+
+.Button:focus,
+button:focus {
+    border: darken($brand-color, 20%) solid 1px;
+}

@@ -27,7 +27,7 @@ var Router = new VueRouter({ history: true });
 Router.map(require('./routes.js'));
 Router.start(App, '#app');
 
-},{"./components/nav":6,"./routes.js":17,"./vue-register":30,"vue-router":57}],2:[function(require,module,exports){
+},{"./components/nav":6,"./routes.js":18,"./vue-register":31,"vue-router":58}],2:[function(require,module,exports){
 'use strict';
 
 /**
@@ -78,140 +78,65 @@ module.exports = {
 };
 
 },{"./nav.template.html":7}],7:[function(require,module,exports){
-module.exports = "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n    <div class=\"container\">\n        <div class=\"navbar-header\">\n            <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            </button>\n            <a class=\"navbar-brand\" v-link=\"{ path: '/' }\">Blog</a>\n        </div>\n\n        <div class=\"collapse navbar-collapse\">\n\n            <ul class=\"nav navbar-nav navbar-right\">\n                <li><a v-link=\"{ path: '/' }\">Home</a></li>\n                <li><a v-link=\"{ path: '/posts' }\">Posts</a></li>\n                <li><a v-link=\"{ path: '/posts/create' }\">Create posts</a></li>\n            </ul>\n        </div><!--/.nav-collapse -->\n    </div>\n</nav>\n";
+module.exports = "<nav class=\"Nav\">\n    <ul class=\"Nav__items\">\n        <li class=\"Nav__item\">\n            <a class=\"Nav__link\" v-link=\"{ name: 'dashboard', exact: true, activeClass: 'Nav__link--active'}\">\n                <object class=\"Icon Nav__icon\" data=\"/images/icons/dashboard-half.svg\" type=\"image/svg+xml\"></object>\n                <span class=\"Nav__text\">Manage posts</span>\n            </a>\n        </li>\n        <li class=\"Nav__item\">\n            <a class=\"Nav__link\" v-link=\"{ name: 'posts-admin', exact: true, activeClass: 'Nav__link--active'}\">\n                <object class=\"Icon Nav__icon\" data=\"/images/icons/edit.svg\" type=\"image/svg+xml\"></object>\n                <span class=\"Nav__text\">Dashboard</span>\n            </a>\n        </li>\n        <li class=\"Nav__item\">\n            <a class=\"Nav__link\" v-link=\"{ name: 'posts', exact: true, activeClass: 'Nav__link--active'}\">\n                <object class=\"Icon Nav__icon\" data=\"/images/icons/painting.svg\" type=\"image/svg+xml\"></object>\n                <span class=\"Nav__text\">Paintings</span>\n            </a>\n        </li>\n    </ul>\n</nav>\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
 
-var Dropzone = require('dropzone');
+/**
+ * The post-edit view.
+ * @type {Object}
+ */
 module.exports = {
-    template: require('./photo-upload.template.html'),
-    props: ['photos', 'uploadpath'],
-    mixins: [require('../mixins/photo-resource')],
-    data: function data() {
-        return {
-            token: 'photo-upload.js - ADD TOKEN HERE',
-            imageUpload: null
-        };
+    template: require('./post-edit.template.html'),
+    props: ['post'],
+    mixins: [require('../mixins/post-resource')],
+    components: {
+        trix: require('../components/trix'),
+        loader: require('../components/loader'),
+        photoUpload: require('../components/uploader')
     },
-    ready: function ready() {
-        var self = this;
-        this.imageUpload = new Dropzone('.PhotoUpload', {
-            url: this.$http.options.root + '/' + this.uploadpath,
-            maxFiles: 10,
-            paramName: 'photo',
-            maxFilesize: 3,
-            thumbnailWidth: 1000,
-            thumbnailHeight: 1000,
-            acceptedFiles: '.jpg, .jpeg, .png, .gif',
-            init: function init() {
-                var _this = this;
-
-                var currentPhotos = self.photos;
-                if (typeof currentPhotos !== 'undefined' && currentPhotos.length !== 0) {
-                    currentPhotos.forEach(function (photo) {
-                        var mockFile = { name: photo.name, size: 12345 };
-                        var url = self.$http.options.root + '/' + photo.path;
-                        _this.options.addedfile.call(_this, mockFile);
-                        _this.options.thumbnail.call(_this, mockFile, url);
-                        mockFile.previewElement.classList.add('dz-success');
-                        mockFile.previewElement.classList.add('dz-complete');
-                        _this.element.getElementsByClassName('PhotoUpload__message')[0].classList.add('PhotoUpload__message--hidden');
-                        _this.element.getElementsByClassName('PhotoUpload__progress')[0].classList.add('PhotoUpload__progress--hidden');
-                    });
-                }
-            },
-            removedfile: function removedfile(file) {
-                self.photos.every(function (photo) {
-                    if (photo.name == file.name) {
-                        self.deletePhoto(photo.id);
-                        return false;
-                    }
-                    return true;
-                });
-            },
-            // jscs:disable
-            previewTemplate: '\n            <div class=\'PhotoUpload__preview\'>\n                <span data-dz-remove>\n                    <img class="Icon  Icon__small PhotoUpload__remove" src="/images/icons/ui/circle-remove.svg">\n                </span>\n                <img data-dz-thumbnail class=\'PhotoUpload__image\'>\n                <div class="PhotoUpload__progress dz-progress">\n                    <div class="PhotoUpload__uploaded dz-upload" data-dz-uploadprogress>\n                    </div>\n                </div>\n                <div data-dz-errormessage></div>\n            </div>'
-            // jscs:enable
-        });
-        this.registerListners();
-    },
-
     methods: {
-        registerListners: function registerListners() {
-            this.successListner();
-            this.removeListner();
-            this.addListner();
-            this.dragLeaveListner();
-            this.dragOverListner();
-            this.dragEnterListner();
-            this.dragEndListner();
-            this.maxFileListner();
-            this.errorListner();
-        },
-        successListner: function successListner() {
-            this.imageUpload.on('success', function () {
-                this.element.getElementsByClassName('PhotoUpload__progress')[0].classList.add('PhotoUpload__progress--hidden');
-            });
-        },
-        removeListner: function removeListner() {
-            this.imageUpload.on('removedfile', function ($file, $fileList) {
-                console.log('photo-upload.js', $file);
-                this.element.getElementsByClassName('PhotoUpload__message')[0].classList.remove('PhotoUpload__message--hidden');
-            });
-        },
-        addListner: function addListner() {
-            this.imageUpload.on('addedfile', function () {
-                this.element.getElementsByClassName('PhotoUpload__message')[0].classList.add('PhotoUpload__message--hidden');
-            });
-        },
-        dragLeaveListner: function dragLeaveListner() {
-            this.imageUpload.on('dragleave', function () {
-                this.element.classList.remove('Avatar--over');
-                this.element.getElementsByClassName('PhotoUpload__icon')[0].classList.remove('PhotoUpload__icon--over');
-            });
-        },
-        dragOverListner: function dragOverListner() {
-            this.imageUpload.on('dragover', function () {
-                this.element.classList.add('Avatar--over');
-                this.element.getElementsByClassName('PhotoUpload__icon')[0].classList.add('PhotoUpload__icon--over');
-            });
-        },
-        dragEnterListner: function dragEnterListner() {
-            this.imageUpload.on('dragenter', function () {
-                this.element.classList.add('Avatar--over');
-                this.element.getElementsByClassName('PhotoUpload__icon')[0].classList.add('PhotoUpload__icon--over');
-            });
-        },
-        dragEndListner: function dragEndListner() {
-            this.imageUpload.on('dragend', function () {
-                this.element.classList.remove('Avatar--over');
-                this.element.getElementsByClassName('PhotoUpload__icon')[0].classList.remove('PhotoUpload__icon--over');
-            });
-        },
-        maxFileListner: function maxFileListner() {
-            this.imageUpload.on('maxfilesexceeded', function (file) {
-                this.removeAllFiles();
-                this.addFile(file);
-            });
-        },
-        errorListner: function errorListner() {
-            this.imageUpload.on('error', function (file, respons) {
-                var errors = '';
-                for (var i = 0; i < response.photo.length; i++) {
-                    errors += '<li>' + response.photo[i] + '</li>';
-                }
-                file.previewElement.classList.add('dz-error');
-                file.previewElement.querySelector('[data-dz-errormessage]').innerHTML = '\n                    <ul class="PhotoUpload__error">\n                        <li><b>Error:</b></li>' + errors + '\n                    </ul>';
-            });
+        close: function close() {
+            this.post = {};
+            this.loading = true;
+            this.$dispatch('edit-stop');
+        }
+    },
+    events: {
+        'edit-start': function editStart(id) {
+            this.getPost(id, ['photos']);
         }
     }
 };
 
-},{"../mixins/photo-resource":14,"./photo-upload.template.html":9,"dropzone":31}],9:[function(require,module,exports){
-module.exports = "<form class=\"PhotoUpload\">\n    <input type=\"hidden\" name=\"_token\" value=\"{{ token }}\">\n    <div class=\"PhotoUpload__message dz-message\" data-dz-message>\n        <img class=\"Icon  Icon__medium PhotoUpload__icon\" src=\"/images/icons/media/image-02.svg\" alt=\"Upload icon\">\n        <p class=\"PhotoUpload__text\">Drop profile-picture <br> here</p>\n    </div>\n</form>";
+},{"../components/loader":4,"../components/trix":12,"../components/uploader":14,"../mixins/post-resource":16,"./post-edit.template.html":9}],9:[function(require,module,exports){
+module.exports = "<div class=\"Post-edit\">\n    <loader v-if=\"loading\">post</loader>\n    <div v-if=\"!loading\">\n        <div class=\"Post-edit__header\">\n            <button @click=\"updatePost(post.id)\">Save</button>\n            <button @click=\"close()\">Close</button>\n        </div>\n        <photo-upload\n            :photos.sync=\"post.photos.data\"\n            :overrides=\"{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }\">\n        </photo-upload>\n        <input v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n        <div v-if=\"post.content\">\n            <trix :content.sync=\"post.content\"></trix>\n        </div>\n        <br>\n        <button @click=\"updatePost(post.id)\">Update</button>\n\n        <br><br><br><br>\n        <button @click=\"deletePost(post.id)\">DELETE</button>\n    </div>\n</div>\n";
 
 },{}],10:[function(require,module,exports){
+'use strict';
+
+/**
+ * The post-sidebar view.
+ * @type {Object}
+ */
+module.exports = {
+    template: require('./post-sidebar.template.html'),
+    props: ['editId', 'posts'],
+    methods: {
+        setEdit: function setEdit(id) {
+            this.$dispatch('edit-start', id);
+        },
+        create: function create() {
+            this.$dispatch('create-new-post');
+        }
+    }
+};
+
+},{"./post-sidebar.template.html":11}],11:[function(require,module,exports){
+module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__small Post-sidebar__create-icon\" data=\"/images/icons/arrow-right.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li class=\"Post-sidebar__item\" v-for=\"post in posts\" @click=\"this.setEdit(post.id)\">\n            <span class=\"Post-sidebar__title\">{{ post.title |truncate 35 }}</span>\n            <object class=\"Icon__small Post-sidebar__icon\" data=\"/images/icons/arrow-right.svg\" type=\"image/svg+xml\"></object>\n        </li>\n    </ul>\n</div>\n";
+
+},{}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -222,9 +147,8 @@ module.exports = {
     template: require('./trix.template.html'),
     props: ['content'],
     ready: function ready() {
-        var element = document.querySelector('trix-editor');
         var self = this;
-
+        var element = document.querySelector('trix-editor');
         element.addEventListener('trix-initialize', self.updateContent);
         element.addEventListener('trix-change', self.updateContent);
     },
@@ -232,6 +156,7 @@ module.exports = {
     methods: {
         updateContent: function updateContent() {
             var data = document.getElementById('editor');
+
             if (typeof data.value !== 'undefined') {
                 this.$set('content', data.value);
             }
@@ -239,10 +164,10 @@ module.exports = {
     }
 };
 
-},{"./trix.template.html":11}],11:[function(require,module,exports){
+},{"./trix.template.html":13}],13:[function(require,module,exports){
 module.exports = "<trix-toolbar id=\"trix-toolbar-1\">\n  <div class=\"button_groups\">\n      <button type=\"button\" class=\"bold\" data-attribute=\"bold\" data-key=\"b\" title=\"Bold\">\n          <img src=\"images/bold.svg\" alt=\"bold\">\n      </button>\n      <button type=\"button\" class=\"italic\" data-attribute=\"italic\" data-key=\"i\" title=\"Italic\">\n          <img src=\"images/italic.svg\" alt=\"italic\">\n      </button>\n      <button type=\"button\" class=\"link\" data-attribute=\"href\" data-action=\"link\" data-key=\"k\" title=\"Link\">\n          <img src=\"images/link.svg\" alt=\"link\">\n      </button>\n      <button type=\"button\" class=\"quote\" data-attribute=\"quote\" title=\"Quote\">\n          <img src=\"images/quote.svg\" alt=\"quote\">\n      </button>\n      <button type=\"button\" class=\"list bullets\" data-attribute=\"bullet\" title=\"Bullets\">\n          <img src=\"images/list-bullet.svg\" alt=\"list-bullet\">\n      </button>\n      <button type=\"button\" class=\"list numbers\" data-attribute=\"number\" title=\"Numbers\">\n          <img src=\"images/list-numbers.svg\" alt=\"list-numbers\">\n      </button>\n  </div>\n\n  <div class=\"dialogs\">\n    <div class=\"dialog link_dialog\" data-attribute=\"href\" data-dialog=\"href\">\n      <div class=\"link_url_fields\">\n        <input type=\"url\" required=\"\" name=\"href\" placeholder=\"Enter a URL…\" disabled=\"disabled\">\n        <div class=\"button_group\">\n          <input type=\"button\" value=\"Link\" data-method=\"setAttribute\">\n          <input type=\"button\" value=\"Unlink\" data-method=\"removeAttribute\">\n        </div>\n      </div>\n    </div>\n  </div>\n</trix-toolbar>\n\n<article>\n  <input v-model=\"content\" id=\"editor\" type=\"hidden\" name=\"content\">\n  <trix-editor v-el=\"editor\" toolbar=\"trix-toolbar-1\" input=\"editor\" placeholder=\"Write here..\"></trix-editor>\n</article>\n";
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -267,8 +192,6 @@ module.exports = {
                 url: '/',
                 paramName: 'photo',
                 maxFilesize: 4,
-                thumbnailWidth: 250,
-                thumbnailHeight: 250,
                 acceptedFiles: '.jpg, .jpeg, .png, .gif',
                 removedfile: this.delete,
                 success: this.addToPhotos,
@@ -336,35 +259,10 @@ module.exports = {
     }
 };
 
-},{"./uploader.template.html":13,"dropzone":31}],13:[function(require,module,exports){
+},{"./uploader.template.html":15,"dropzone":32}],15:[function(require,module,exports){
 module.exports = "<form class=\"Uploader\">\n    <div class=\"Uploader__message dz-message\" data-dz-message>\n        <img class=\"Uploader__icon\" src=\"http://placehold.it/50x50\" alt=\"Upload icon\">\n        <p class=\"Uploader__text\">Drop profile-picture <br> here</p>\n    </div>\n</form>\n";
 
-},{}],14:[function(require,module,exports){
-'use strict';
-
-/**
- * post-resource mixin.
- * @type {Object}
- */
-module.exports = {
-    data: function data() {
-        return {
-            path: 'photos{/id}'
-        };
-    },
-
-    methods: {
-        deletePhoto: function deletePhoto(id) {
-            this.$resource(this.path).delete({ id: id }, this.post).then(function (response) {
-                alert('Deleted');
-            }, function (response) {
-                alert('Error deleting');
-            });
-        }
-    }
-};
-
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -390,6 +288,7 @@ module.exports = {
 
             var include = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
+            this.$set('loading', true);
             this.resource.get({}, { include: include }).then(function (response) {
                 _this.$set('posts', response.data.data);
                 _this.$set('loading', false);
@@ -404,6 +303,7 @@ module.exports = {
 
             var include = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
 
+            this.$set('loading', true);
             this.resource.get({ id: id }, { include: include }).then(function (response) {
                 _this2.$set('post', response.data.data);
                 _this2.$set('loading', false);
@@ -414,6 +314,7 @@ module.exports = {
         createPost: function createPost() {
             var _this3 = this;
 
+            this.$set('loading', true);
             this.resource.save(this.post).then(function (response) {
                 _this3.$set('post', response.data.data);
                 _this3.$set('loading', false);
@@ -428,6 +329,7 @@ module.exports = {
                 url: 'posts/embryo',
                 method: 'POST'
             };
+            this.$set('loading', true);
             this.$http(request).then(function (response) {
                 _this4.$set('post', response.data.data);
                 _this4.$set('loading', false);
@@ -455,7 +357,7 @@ module.exports = {
     }
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 /**
@@ -473,25 +375,34 @@ function example(Vue, options) {
 
 module.exports = example;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = {
     '/': {
         component: require('./views/welcome')
     },
+    '/admin': {
+        component: require('./views/admin'),
+        subRoutes: {
+            '/': {
+                name: 'dashboard',
+                component: {
+                    template: '<p>This will be a dashboard in the future!</p>'
+                }
+            },
+            '/posts': {
+                name: 'posts-admin',
+                component: require('./views/post-admin')
+            }
+        }
+    },
     'posts/:id': {
         name: 'post',
         component: require('./views/post')
     },
-    'posts/:id/edit': {
-        name: 'post-edit',
-        component: require('./views/post-edit')
-    },
-    'posts/create': {
-        component: require('./views/post-create')
-    },
     '/posts': {
+        name: 'posts',
         component: require('./views/posts')
     },
     '*': {
@@ -499,7 +410,7 @@ module.exports = {
     }
 };
 
-},{"./views/404":18,"./views/post":24,"./views/post-create":20,"./views/post-edit":22,"./views/posts":26,"./views/welcome":28}],18:[function(require,module,exports){
+},{"./views/404":19,"./views/admin":21,"./views/post":25,"./views/post-admin":23,"./views/posts":27,"./views/welcome":29}],19:[function(require,module,exports){
 'use strict';
 
 /**
@@ -513,69 +424,67 @@ module.exports = {
     }
 };
 
-},{"./404.template.html":19}],19:[function(require,module,exports){
+},{"./404.template.html":20}],20:[function(require,module,exports){
 module.exports = "<center><h2>404 - Not found</h2></center>\n";
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 /**
- * The post-create view.
+ * The admin view.
  * @type {Object}
  */
 module.exports = {
-    template: require('./post-create.template.html'),
-    mixins: [require('../mixins/post-resource')],
-    data: function data() {
-        return {};
-    },
-    ready: function ready() {
-        this.createEmbryoPost();
-    },
-
+    template: require('./admin.template.html'),
     components: {
-        trix: require('../components/trix'),
-        loader: require('../components/loader'),
-        photoUpload: require('../components/photo-upload')
-    },
-    methods: {}
+        navigation: require('../components/nav')
+    }
 };
 
-},{"../components/loader":4,"../components/photo-upload":8,"../components/trix":10,"../mixins/post-resource":15,"./post-create.template.html":21}],21:[function(require,module,exports){
-module.exports = "<div>\n    <h2>Create post</h2>\n    <loader v-if=\"loading\">post</loader>\n\n    <div v-if=\"!loading\">\n        <photo-upload :photos.sync=\"post.photos.data\" :uploadpath=\"post.id + '/photos'\"></photo-upload>\n        <input v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n        <br>\n        <trix :content.sync=\"post.content\"></trix>\n        <br>\n        <button @click=\"updatePost(post.id)\">Spara</button>\n    </div>\n</div>\n";
+},{"../components/nav":6,"./admin.template.html":22}],22:[function(require,module,exports){
+module.exports = "<div class=\"Admin-page\">\n    <navigation></navigation>\n    <router-view></router-view>\n</div>\n";
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 /**
- * The post-update view.
+ * The post-admin view.
  * @type {Object}
  */
 module.exports = {
-    template: require('./post-edit.template.html'),
+    template: require('./post-admin.template.html'),
     mixins: [require('../mixins/post-resource')],
     data: function data() {
         return {
-            id: this.$route.params.id
+            posts: {},
+            editing: false,
+            post: {}
         };
     },
 
     components: {
-        trix: require('../components/trix'),
-        loader: require('../components/loader'),
-        photoUpload: require('../components/uploader')
+        postSidebar: require('../components/post-sidebar'),
+        postEdit: require('../components/post-edit')
     },
     ready: function ready() {
-        this.getPost(this.id, ['photos']);
+        this.getPosts();
     },
 
-    methods: {}
+    events: {
+        'edit-start': function editStart(id) {
+            this.editing = true;
+            this.$broadcast('edit-start', id);
+        },
+        'edit-stop': function editStop() {
+            this.editing = false;
+        }
+    }
 };
 
-},{"../components/loader":4,"../components/trix":10,"../components/uploader":12,"../mixins/post-resource":15,"./post-edit.template.html":23}],23:[function(require,module,exports){
-module.exports = "<div>\n    <h2>Update post</h2>\n\n    <loader v-if=\"loading\">post</loader>\n\n    <div v-if=\"!loading\">\n\n        <photo-upload :photos.sync=\"post.photos.data\" :overrides=\"{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }\"></photo-upload>\n        <input v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n        <br>\n        <div v-if=\"post.content\">\n            <trix :content.sync=\"post.content\"></trix>\n        </div>\n        <br>\n        <button @click=\"updatePost(post.id)\">Update</button>\n\n        <br><br><br><br>\n        <button @click=\"deletePost(post.id)\">DELETE</button>\n    </div>\n</div>\n";
+},{"../components/post-edit":8,"../components/post-sidebar":10,"../mixins/post-resource":16,"./post-admin.template.html":24}],24:[function(require,module,exports){
+module.exports = "<div class=\"Post-admin-page\">\n    <post-sidebar\n        v-bind:class=\"{'Post-sidebar--small': editing}\"\n        :posts.sync=\"posts\"\n        ></post-sidebar>\n    <post-edit\n        v-bind:class=\"{'Post-edit--small': !editing}\"\n        :post.sync=\"post\"\n        ></post-edit>\n</div>\n";
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 /**
@@ -605,10 +514,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":15,"./post.template.html":25}],25:[function(require,module,exports){
+},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":16,"./post.template.html":26}],26:[function(require,module,exports){
 module.exports = "<div>\n    <loader v-if=\"loading\">post</loader>\n    <blog-article v-if=\"!loading\" :post.sync=\"post\"></blog-article>\n</div>\n";
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 /**
@@ -636,10 +545,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":15,"./posts.template.html":27}],27:[function(require,module,exports){
+},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":16,"./posts.template.html":28}],28:[function(require,module,exports){
 module.exports = "<div>\n    <loader v-if=\"loading\">posts</loader>\n\n    <div v-if=\"error\">\n        <h3>{{message}}</h3>\n    </div>\n\n    <section v-if=\"!loading\" v-for=\"post in posts\">\n        <blog-article :post.sync=\"post\"></blog-article>\n    </section>\n</div>\n";
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 /**
@@ -651,10 +560,10 @@ module.exports = {
   components: {}
 };
 
-},{"./welcome.template.html":29}],29:[function(require,module,exports){
+},{"./welcome.template.html":30}],30:[function(require,module,exports){
 module.exports = "<div>\n<h1>Hello</h1>\n    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda dolore distinctio officiis eius consequuntur aperiam neque ex voluptates odio repellat deserunt eos consequatur at amet tempora sequi, non sapiente.</p>\n</div>\n";
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 var Vue = require('vue');
@@ -666,9 +575,24 @@ Vue.use(require('./plugins/example'));
 Vue.use(require('vue-router'));
 Vue.use(require('vue-resource'));
 
+/**
+ * Vue filter to truncate a string to the specified length.
+ *
+ * @param {String} value The value string.
+ */
+Vue.filter('truncate', function (value, length) {
+  if (value.length < length) {
+    return value;
+  }
+
+  length = length - 3;
+
+  return value.substring(0, length) + '...';
+});
+
 module.exports = Vue;
 
-},{"./plugins/example":16,"vue":58,"vue-resource":46,"vue-router":57}],31:[function(require,module,exports){
+},{"./plugins/example":17,"vue":59,"vue-resource":47,"vue-router":58}],32:[function(require,module,exports){
 
 /*
  *
@@ -2437,7 +2361,7 @@ module.exports = Vue;
 
 }).call(this);
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2530,7 +2454,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * Before Interceptor.
  */
@@ -2550,7 +2474,7 @@ module.exports = {
 
 };
 
-},{"../util":56}],34:[function(require,module,exports){
+},{"../util":57}],35:[function(require,module,exports){
 /**
  * Base client.
  */
@@ -2617,7 +2541,7 @@ function parseHeaders(str) {
     return headers;
 }
 
-},{"../../promise":49,"../../util":56,"./xhr":37}],35:[function(require,module,exports){
+},{"../../promise":50,"../../util":57,"./xhr":38}],36:[function(require,module,exports){
 /**
  * JSONP client.
  */
@@ -2667,7 +2591,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":49,"../../util":56}],36:[function(require,module,exports){
+},{"../../promise":50,"../../util":57}],37:[function(require,module,exports){
 /**
  * XDomain client (Internet Explorer).
  */
@@ -2706,7 +2630,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":49,"../../util":56}],37:[function(require,module,exports){
+},{"../../promise":50,"../../util":57}],38:[function(require,module,exports){
 /**
  * XMLHttp client.
  */
@@ -2758,7 +2682,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":49,"../../util":56}],38:[function(require,module,exports){
+},{"../../promise":50,"../../util":57}],39:[function(require,module,exports){
 /**
  * CORS Interceptor.
  */
@@ -2797,7 +2721,7 @@ function crossOrigin(request) {
     return (requestUrl.protocol !== originUrl.protocol || requestUrl.host !== originUrl.host);
 }
 
-},{"../util":56,"./client/xdr":36}],39:[function(require,module,exports){
+},{"../util":57,"./client/xdr":37}],40:[function(require,module,exports){
 /**
  * Header Interceptor.
  */
@@ -2825,7 +2749,7 @@ module.exports = {
 
 };
 
-},{"../util":56}],40:[function(require,module,exports){
+},{"../util":57}],41:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -2925,7 +2849,7 @@ Http.headers = {
 
 module.exports = _.http = Http;
 
-},{"../promise":49,"../util":56,"./before":33,"./client":34,"./cors":38,"./header":39,"./interceptor":41,"./jsonp":42,"./method":43,"./mime":44,"./timeout":45}],41:[function(require,module,exports){
+},{"../promise":50,"../util":57,"./before":34,"./client":35,"./cors":39,"./header":40,"./interceptor":42,"./jsonp":43,"./method":44,"./mime":45,"./timeout":46}],42:[function(require,module,exports){
 /**
  * Interceptor factory.
  */
@@ -2972,7 +2896,7 @@ function when(value, fulfilled, rejected) {
     return promise.then(fulfilled, rejected);
 }
 
-},{"../promise":49,"../util":56}],42:[function(require,module,exports){
+},{"../promise":50,"../util":57}],43:[function(require,module,exports){
 /**
  * JSONP Interceptor.
  */
@@ -2992,7 +2916,7 @@ module.exports = {
 
 };
 
-},{"./client/jsonp":35}],43:[function(require,module,exports){
+},{"./client/jsonp":36}],44:[function(require,module,exports){
 /**
  * HTTP method override Interceptor.
  */
@@ -3011,7 +2935,7 @@ module.exports = {
 
 };
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /**
  * Mime Interceptor.
  */
@@ -3049,7 +2973,7 @@ module.exports = {
 
 };
 
-},{"../util":56}],45:[function(require,module,exports){
+},{"../util":57}],46:[function(require,module,exports){
 /**
  * Timeout Interceptor.
  */
@@ -3081,7 +3005,7 @@ module.exports = function () {
     };
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -3136,7 +3060,7 @@ if (window.Vue) {
 
 module.exports = install;
 
-},{"./http":40,"./promise":49,"./resource":50,"./url":51,"./util":56}],47:[function(require,module,exports){
+},{"./http":41,"./promise":50,"./resource":51,"./url":52,"./util":57}],48:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
  */
@@ -3317,7 +3241,7 @@ p.catch = function (onRejected) {
 
 module.exports = Promise;
 
-},{"../util":56}],48:[function(require,module,exports){
+},{"../util":57}],49:[function(require,module,exports){
 /**
  * URL Template v2.0.6 (https://github.com/bramstein/url-template)
  */
@@ -3469,7 +3393,7 @@ exports.encodeReserved = function (str) {
     }).join('');
 };
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /**
  * Promise adapter.
  */
@@ -3580,7 +3504,7 @@ p.always = function (callback) {
 
 module.exports = Promise;
 
-},{"./lib/promise":47,"./util":56}],50:[function(require,module,exports){
+},{"./lib/promise":48,"./util":57}],51:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -3692,7 +3616,7 @@ Resource.actions = {
 
 module.exports = _.resource = Resource;
 
-},{"./util":56}],51:[function(require,module,exports){
+},{"./util":57}],52:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -3824,7 +3748,7 @@ function serialize(params, obj, scope) {
 
 module.exports = _.url = Url;
 
-},{"../util":56,"./legacy":52,"./query":53,"./root":54,"./template":55}],52:[function(require,module,exports){
+},{"../util":57,"./legacy":53,"./query":54,"./root":55,"./template":56}],53:[function(require,module,exports){
 /**
  * Legacy Transform.
  */
@@ -3872,7 +3796,7 @@ function encodeUriQuery(value, spaces) {
         replace(/%20/g, (spaces ? '%20' : '+'));
 }
 
-},{"../util":56}],53:[function(require,module,exports){
+},{"../util":57}],54:[function(require,module,exports){
 /**
  * Query Parameter Transform.
  */
@@ -3898,7 +3822,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":56}],54:[function(require,module,exports){
+},{"../util":57}],55:[function(require,module,exports){
 /**
  * Root Prefix Transform.
  */
@@ -3916,7 +3840,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":56}],55:[function(require,module,exports){
+},{"../util":57}],56:[function(require,module,exports){
 /**
  * URL Template (RFC 6570) Transform.
  */
@@ -3934,7 +3858,7 @@ module.exports = function (options) {
     return url;
 };
 
-},{"../lib/url-template":48}],56:[function(require,module,exports){
+},{"../lib/url-template":49}],57:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -4058,7 +3982,7 @@ function merge(target, source, deep) {
     }
 }
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /*!
  * vue-router v0.7.11
  * (c) 2016 Evan You
@@ -6708,7 +6632,7 @@ function merge(target, source, deep) {
   return Router;
 
 }));
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v1.0.16
@@ -16304,5 +16228,5 @@ if (devtools) {
 module.exports = Vue;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":32}]},{},[1])
+},{"_process":33}]},{},[1])
 

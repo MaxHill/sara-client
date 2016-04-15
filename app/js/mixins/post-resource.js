@@ -16,6 +16,7 @@ module.exports = {
     },
     methods: {
         getPosts(include = []) {
+            this.$set('loading', true);
             this.resource.get({}, {include}).then((response) => {
                 this.$set('posts', response.data.data);
                 this.$set('loading', false);
@@ -27,6 +28,7 @@ module.exports = {
         },
 
         getPost(id, include = []) {
+            this.$set('loading', true);
             this.resource.get({id: id}, {include}).then((response) => {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);
@@ -36,6 +38,7 @@ module.exports = {
         },
 
         createPost() {
+            this.$set('loading', true);
             this.resource.save(this.post).then((response) => {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);
@@ -49,6 +52,7 @@ module.exports = {
                 url: 'posts/embryo',
                 method: 'POST'
             };
+            this.$set('loading', true);
             this.$http(request).then((response) => {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);

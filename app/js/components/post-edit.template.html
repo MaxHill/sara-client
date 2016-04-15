@@ -1,13 +1,15 @@
-<div>
-    <h2>Update post</h2>
-
+<div class="Post-edit">
     <loader v-if="loading">post</loader>
-
     <div v-if="!loading">
-
-        <photo-upload :photos.sync="post.photos.data" :overrides="{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }"></photo-upload>
+        <div class="Post-edit__header">
+            <button @click="updatePost(post.id)">Save</button>
+            <button @click="close()">Close</button>
+        </div>
+        <photo-upload
+            :photos.sync="post.photos.data"
+            :overrides="{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }">
+        </photo-upload>
         <input v-model="post.title" type="text" placeholder="Title">
-        <br>
         <div v-if="post.content">
             <trix :content.sync="post.content"></trix>
         </div>

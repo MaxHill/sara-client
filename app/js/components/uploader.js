@@ -20,8 +20,6 @@ module.exports = {
                 url: '/',
                 paramName: 'photo',
                 maxFilesize: 4,
-                thumbnailWidth: 250,
-                thumbnailHeight: 250,
                 acceptedFiles: '.jpg, .jpeg, .png, .gif',
                 removedfile: this.delete,
                 success: this.addToPhotos,

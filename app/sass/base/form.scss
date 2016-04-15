@@ -1,0 +1,57 @@
+input,
+select,
+textarea {
+    padding: 0.5em 0.6em;
+    display: block;
+    border: 2px solid $gray;
+    border-radius: 4px;
+    vertical-align: middle;
+    outline: 0;
+    width: 100%;
+}
+
+input:focus,
+textarea:focus {
+    border: 2px solid $black;
+}
+
+
+
+input[type=checkbox] {
+    opacity: 0;
+    height:0;
+    width:0;
+    line-height: 0;
+}
+
+input[type=checkbox] + label {
+    user-select: none;
+    display: inline-block;
+    vertical-align: bottom;
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+input[type=checkbox] + label svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    position:absolute ;
+    left:50% ;
+    margin-left: -0.6rem;
+    top:50% ;
+    margin-top: -0.6rem;
+    opacity: .5;
+}
+
+input[type=checkbox] + label path:first-child{
+    display: none;
+}
+
+input[type=checkbox]:checked + label path:first-child{
+    display: inline;
+}
+
+input[type=checkbox]:focus + label svg {
+    opacity: 1;
+}
