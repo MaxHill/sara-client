@@ -1,0 +1,48 @@
+.Trix {
+    width: 100%;
+    margin: 3rem auto 0 auto;
+    max-width: $articlewidth;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Trix__wraper {
+    width: 90%;
+    max-width: 600px;
+}
+
+.Trix__toolbar {
+    margin-bottom: 1rem;
+}
+
+.Trix__dialog {
+    padding: 1rem 0;
+}
+
+.Trix__dialog-button {
+    width: 40%;
+    margin: .5rem 5%;
+    float: left;
+}
+
+.Trix__button {
+    background: transparent;
+    border:0;
+    padding: .7rem 1rem .3rem 1rem;
+    margin:0;
+}
+
+.Trix__button.active {
+    background: $gray;
+}
+
+.Trix__editor {
+    padding-top: 1rem;
+    border-top: 1px solid transparent;
+    transition: $transition-fast-linear;
+}
+.Trix__editor:focus {
+    outline:none;
+    border-top: 1px solid $gray;
+}

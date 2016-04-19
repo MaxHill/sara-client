@@ -90,6 +90,11 @@ module.exports = "<nav class=\"Nav\">\n    <ul class=\"Nav__items\">\n        <l
 module.exports = {
     template: require('./post-edit.template.html'),
     props: ['post'],
+    computed: {
+        loaded: function loaded() {
+            return typeof this.post.id !== 'undefined';
+        }
+    },
     mixins: [require('../mixins/post-resource')],
     components: {
         trix: require('../components/trix'),
@@ -99,19 +104,19 @@ module.exports = {
     methods: {
         close: function close() {
             this.post = {};
-            this.loading = true;
             this.$dispatch('edit-stop');
         }
     },
     events: {
         'edit-start': function editStart(id) {
+            this.post = {};
             this.getPost(id, ['photos']);
         }
     }
 };
 
 },{"../components/loader":4,"../components/trix":12,"../components/uploader":14,"../mixins/post-resource":16,"./post-edit.template.html":9}],9:[function(require,module,exports){
-module.exports = "<div class=\"Post-edit\">\n    <loader v-if=\"loading\">post</loader>\n    <div v-if=\"!loading\">\n        <div class=\"Post-edit__header\">\n            <button @click=\"updatePost(post.id)\">Save</button>\n            <button @click=\"close()\">Close</button>\n        </div>\n        <photo-upload\n            :photos.sync=\"post.photos.data\"\n            :overrides=\"{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }\">\n        </photo-upload>\n        <input v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n        <div v-if=\"post.content\">\n            <trix :content.sync=\"post.content\"></trix>\n        </div>\n        <br>\n        <button @click=\"updatePost(post.id)\">Update</button>\n\n        <br><br><br><br>\n        <button @click=\"deletePost(post.id)\">DELETE</button>\n    </div>\n</div>\n";
+module.exports = "<div class=\"Post-edit\">\n    <div v-if=\"!loading && !loaded\">\n        <h3>Pick a post to edit or create a brand new one!</h3>\n    </div>\n    <loader v-if=\"loading\">post</loader>\n    <div v-if=\"loaded\">\n        <div class=\"Post-edit__header\">\n            <button class=\"Button Button--success Post-edit__save\" @click=\"updatePost(post.id)\">Save</button>\n            <button class=\"Button\" @click=\"close()\">Close</button>\n        </div>\n\n        <input class=\"h1 Post-edit__title\" v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n\n        <photo-upload\n            :photos.sync=\"post.photos.data\"\n            :overrides=\"{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }\">\n        </photo-upload>\n\n        <trix :content.sync=\"post.content\"></trix>\n        <div class=\"Post-edit__delete-container\">\n            <button class=\"Button Button--danger Post-edit__delete\" @click=\"deletePost(post.id)\">DELETE</button>\n        </div>\n    </div>\n</div>\n";
 
 },{}],10:[function(require,module,exports){
 'use strict';
@@ -123,18 +128,32 @@ module.exports = "<div class=\"Post-edit\">\n    <loader v-if=\"loading\">post</
 module.exports = {
     template: require('./post-sidebar.template.html'),
     props: ['editId', 'posts'],
+    data: function data() {
+        return {
+            active: null
+        };
+    },
+
     methods: {
         setEdit: function setEdit(id) {
             this.$dispatch('edit-start', id);
         },
         create: function create() {
-            this.$dispatch('create-new-post');
+            this.$dispatch('create-post');
+        }
+    },
+    events: {
+        'edit-start': function editStart(id) {
+            this.active = id;
+        },
+        'edit-stop': function editStop() {
+            this.active = null;
         }
     }
 };
 
 },{"./post-sidebar.template.html":11}],11:[function(require,module,exports){
-module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__small Post-sidebar__create-icon\" data=\"/images/icons/arrow-right.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li class=\"Post-sidebar__item\" v-for=\"post in posts\" @click=\"this.setEdit(post.id)\">\n            <span class=\"Post-sidebar__title\">{{ post.title |truncate 35 }}</span>\n            <object class=\"Icon__small Post-sidebar__icon\" data=\"/images/icons/arrow-right.svg\" type=\"image/svg+xml\"></object>\n        </li>\n    </ul>\n</div>\n";
+module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li @click=\"create()\" class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__medium Post-sidebar__create-icon\" data=\"/images/icons/create.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li\n            class=\"Post-sidebar__item\"\n            v-bind:class=\"{'Post-sidebar--active': post.id == active}\"\n            v-for=\"post in posts\"\n            @click=\"this.setEdit(post.id)\"\n            v-if=\"post.title\">\n            <span class=\"Post-sidebar__title\">{{ post.title |truncate 35 }}</span>\n        </li>\n    </ul>\n</div>\n";
 
 },{}],12:[function(require,module,exports){
 'use strict';
@@ -165,7 +184,7 @@ module.exports = {
 };
 
 },{"./trix.template.html":13}],13:[function(require,module,exports){
-module.exports = "<trix-toolbar id=\"trix-toolbar-1\">\n  <div class=\"button_groups\">\n      <button type=\"button\" class=\"bold\" data-attribute=\"bold\" data-key=\"b\" title=\"Bold\">\n          <img src=\"images/bold.svg\" alt=\"bold\">\n      </button>\n      <button type=\"button\" class=\"italic\" data-attribute=\"italic\" data-key=\"i\" title=\"Italic\">\n          <img src=\"images/italic.svg\" alt=\"italic\">\n      </button>\n      <button type=\"button\" class=\"link\" data-attribute=\"href\" data-action=\"link\" data-key=\"k\" title=\"Link\">\n          <img src=\"images/link.svg\" alt=\"link\">\n      </button>\n      <button type=\"button\" class=\"quote\" data-attribute=\"quote\" title=\"Quote\">\n          <img src=\"images/quote.svg\" alt=\"quote\">\n      </button>\n      <button type=\"button\" class=\"list bullets\" data-attribute=\"bullet\" title=\"Bullets\">\n          <img src=\"images/list-bullet.svg\" alt=\"list-bullet\">\n      </button>\n      <button type=\"button\" class=\"list numbers\" data-attribute=\"number\" title=\"Numbers\">\n          <img src=\"images/list-numbers.svg\" alt=\"list-numbers\">\n      </button>\n  </div>\n\n  <div class=\"dialogs\">\n    <div class=\"dialog link_dialog\" data-attribute=\"href\" data-dialog=\"href\">\n      <div class=\"link_url_fields\">\n        <input type=\"url\" required=\"\" name=\"href\" placeholder=\"Enter a URL…\" disabled=\"disabled\">\n        <div class=\"button_group\">\n          <input type=\"button\" value=\"Link\" data-method=\"setAttribute\">\n          <input type=\"button\" value=\"Unlink\" data-method=\"removeAttribute\">\n        </div>\n      </div>\n    </div>\n  </div>\n</trix-toolbar>\n\n<article>\n  <input v-model=\"content\" id=\"editor\" type=\"hidden\" name=\"content\">\n  <trix-editor v-el=\"editor\" toolbar=\"trix-toolbar-1\" input=\"editor\" placeholder=\"Write here..\"></trix-editor>\n</article>\n";
+module.exports = "<div class=\"Trix\">\n    <div class=\"Trix__wraper\">\n        <trix-toolbar class=\"Trix__toolbar\" id=\"trix-toolbar-1\">\n            <div class=\"button_groups\">\n                <button type=\"button\" class=\"Trix__button bold\" data-attribute=\"bold\" data-key=\"b\" title=\"Bold\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/bold.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button italic\" data-attribute=\"italic\" data-key=\"i\" title=\"Italic\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/italic.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button link\" data-attribute=\"href\" data-action=\"link\" data-key=\"k\" title=\"Link\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/link.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button quote\" data-attribute=\"quote\" title=\"Quote\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/quote.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button list bullets\" data-attribute=\"bullet\" title=\"Bullets\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/list-bullet.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button list numbers\" data-attribute=\"number\" title=\"Numbers\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/list-numbers.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n            </div>\n\n            <div class=\"dialogs Trix__dialog\">\n                <div class=\"dialog link_dialog\" data-attribute=\"href\" data-dialog=\"href\">\n                    <div class=\"link_url_fields\">\n                        <input type=\"url\" required=\"\" name=\"href\" placeholder=\"Enter a URL…\" disabled=\"disabled\">\n                        <input class=\"Trix__dialog-button Button Button--success\" type=\"button\" value=\"Link\" data-method=\"setAttribute\">\n                        <input class=\"Trix__dialog-button Button Button--danger\" type=\"button\" value=\"Unlink\" data-method=\"removeAttribute\">\n                    </div>\n                </div>\n            </div>\n        </trix-toolbar>\n\n        <article>\n          <input v-model=\"content\" id=\"editor\" type=\"hidden\" name=\"content\">\n          <trix-editor\n              class=\"Trix__editor\"\n              v-el=\"editor\"\n              toolbar=\"trix-toolbar-1\"\n              input=\"editor\"\n              placeholder=\"Write here..\"></trix-editor>\n        </article>\n    </div>\n</div>\n";
 
 },{}],14:[function(require,module,exports){
 'use strict';
@@ -192,11 +211,12 @@ module.exports = {
                 url: '/',
                 paramName: 'photo',
                 maxFilesize: 4,
+                previewsContainer: '.Uploader__previews',
                 acceptedFiles: '.jpg, .jpeg, .png, .gif',
                 removedfile: this.delete,
                 success: this.addToPhotos,
                 // jscs:disable
-                previewTemplate: '\n                    <div class=\'Uploader__preview\'>\n                        <span data-dz-remove>\n                            <img class="Icon  Icon__small Uploader__remove" src="/images/icons/ui/circle-remove.svg">\n                        </span>\n                        <img data-dz-thumbnail class=\'Uploader__image\'>\n                        <div class="Uploader__progress dz-progress">\n                            <div class="Uploader__uploaded dz-upload" data-dz-uploadprogress>\n                            </div>\n                        </div>\n                        <div data-dz-errormessage></div>\n                    </div>'
+                previewTemplate: '\n                    <div class=\'Uploader__preview-item\'>\n                        <span class="Uploader__remove" data-dz-remove>\n                            <object class="Icon__huge Uploader__icon" data="/images/icons/delete.svg" type="image/svg+xml"></object>\n                        </span>\n                        <img data-dz-thumbnail class=\'Uploader__image\'>\n                        <div class="Uploader__progress dz-progress">\n                            <div class="Uploader__uploaded dz-upload" data-dz-uploadprogress>\n                            </div>\n                        </div>\n                        <div data-dz-errormessage></div>\n                    </div>'
                 // jscs:enable
             }
         };
@@ -208,7 +228,7 @@ module.exports = {
     methods: {
         setup: function setup() {
             this.setOptions();
-            this.uploader = new this.dropzone('.Uploader', this.options);
+            this.uploader = new this.dropzone('.Uploader__dropzone', this.options);
             this.setDefaultPhotos();
         },
         setOptions: function setOptions() {
@@ -218,6 +238,11 @@ module.exports = {
         },
         setDefaultPhotos: function setDefaultPhotos() {
             var self = this;
+
+            if (typeof this.photos == 'undefined' || this.photos.length == 0) {
+                return true;
+            }
+
             this.photos.forEach(function (photo) {
                 var mockFile = { name: photo.name, size: 1234 };
                 var path = self.$http.options.root + '/' + photo.path;
@@ -260,7 +285,7 @@ module.exports = {
 };
 
 },{"./uploader.template.html":15,"dropzone":32}],15:[function(require,module,exports){
-module.exports = "<form class=\"Uploader\">\n    <div class=\"Uploader__message dz-message\" data-dz-message>\n        <img class=\"Uploader__icon\" src=\"http://placehold.it/50x50\" alt=\"Upload icon\">\n        <p class=\"Uploader__text\">Drop profile-picture <br> here</p>\n    </div>\n</form>\n";
+module.exports = "<div class=\"Uploader\">\n    <form class=\"Uploader__dropzone\">\n        <div class=\"Uploader__message dz-message\" data-dz-message>\n            <object class=\"Icon__huge Uploader__icon\" data=\"/images/icons/upload.svg\" type=\"image/svg+xml\"></object>\n            <p class=\"Uploader__text\"><slot>Drag files here to upload</slot></p>\n        </div>\n    </form>\n    <div class=\"Uploader__previews\"></div>\n</div>\n";
 
 },{}],16:[function(require,module,exports){
 'use strict';
@@ -276,7 +301,7 @@ module.exports = {
             path: 'posts{/id}',
             post: {},
             posts: [],
-            loading: true,
+            loading: false,
             error: false,
             message: ''
         };
@@ -319,10 +344,10 @@ module.exports = {
                 _this3.$set('post', response.data.data);
                 _this3.$set('loading', false);
             }, function (response) {
-                alert('Error creating new post');
+                _this3.$dispatch('error', 'Error creating new post');
             });
         },
-        createEmbryoPost: function createEmbryoPost() {
+        createEmbryoPost: function createEmbryoPost(callback) {
             var _this4 = this;
 
             var request = {
@@ -333,25 +358,30 @@ module.exports = {
             this.$http(request).then(function (response) {
                 _this4.$set('post', response.data.data);
                 _this4.$set('loading', false);
+                if (typeof callback == 'function') {
+                    callback();
+                }
             }, function (response) {
-                alert('Error creating new post');
+                _this4.$dispatch('error', 'Error creating new post');
             });
         },
         updatePost: function updatePost(id) {
+            var _this5 = this;
+
             this.resource.update({ id: id }, this.post).then(function (response) {
-                alert('Updated');
+                _this5.$dispatch('success', 'Post updated');
             }, function (response) {
-                alert('Error updating');
+                _this5.$dispatch('error', 'Error updating');
             });
         },
         deletePost: function deletePost(id) {
-            var _this5 = this;
+            var _this6 = this;
 
             this.resource.delete({ id: id }, this.post).then(function (response) {
-                alert('Deleted');
-                _this5.$router.go({ path: '/posts' });
+                _this6.$dispatch('success', 'Post deleted');
+                _this6.$router.go({ path: '/posts' });
             }, function (response) {
-                alert('Error deleting');
+                _this6.$dispatch('error', 'Error deleting');
             });
         }
     }
@@ -471,6 +501,13 @@ module.exports = {
     },
 
     events: {
+        'create-post': function createPost(id) {
+            var _this = this;
+
+            this.createEmbryoPost(function (post) {
+                _this.editing = true;
+            });
+        },
         'edit-start': function editStart(id) {
             this.editing = true;
             this.$broadcast('edit-start', id);

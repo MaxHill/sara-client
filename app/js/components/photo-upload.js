@@ -21,6 +21,7 @@ module.exports = {
             acceptedFiles: '.jpg, .jpeg, .png, .gif',
             init: function() {
                 var currentPhotos = self.photos;
+                console.log(currentPhotos);
                 if (
                     typeof(currentPhotos) !== 'undefined' &&
                     currentPhotos.length !== 0

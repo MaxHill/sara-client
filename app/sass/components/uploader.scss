@@ -1,0 +1,86 @@
+.Uploader {
+    width: 100%;
+    float: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.Uploader__dropzone {
+    float: left;
+    width: 90%;
+    max-width: $articlewidth;
+    border-color: $gray;
+    border-width: 2px;
+    border-style: dashed;
+    border-radius: 15px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: $transition-fast-linear;
+}
+
+.Uploader__message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.Uploader__text {
+    margin: 0;
+    display: inline-block;
+    width: 100%;
+    color: $gray;
+    transition: $transition-fast-linear;
+}
+
+.Uploader__icon {
+    transition: $transition-medium;
+}
+
+.Uploader__previews {
+    margin-top: 2rem;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    justify-content: center;
+}
+
+.Uploader__preview-item {
+    position: relative;
+}
+
+.Uploader__remove {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    cursor: pointer;
+    opacity: .8;
+    transform: scale(.8);
+    transition: $transition-medium;
+}
+
+.Uploader__remove:hover {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.Uploader__image {
+    max-width: 100%;
+}
+
+.Uploader__dropzone:hover .Uploader__icon,
+.Uploader__dropzone:active .Uploader__icon,
+.dz-drag-hover .Uploader__icon {
+    transform: scale(1.05) translate3d(0,-5px,0);
+}
+
+.Uploader__dropzone:hover,
+.dz-drag-hover {
+    border-color: $dark-gray;
+}

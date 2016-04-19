@@ -20,6 +20,11 @@ module.exports = {
         this.getPosts();
     },
     events: {
+        'create-post': function(id) {
+            this.createEmbryoPost((post) => {
+                this.editing = true;
+            });
+        },
         'edit-start': function(id) {
             this.editing = true;
             this.$broadcast('edit-start', id);

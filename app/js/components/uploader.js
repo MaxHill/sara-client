@@ -20,14 +20,15 @@ module.exports = {
                 url: '/',
                 paramName: 'photo',
                 maxFilesize: 4,
+                previewsContainer: '.Uploader__previews',
                 acceptedFiles: '.jpg, .jpeg, .png, .gif',
                 removedfile: this.delete,
                 success: this.addToPhotos,
                 // jscs:disable
                 previewTemplate: `
-                    <div class='Uploader__preview'>
-                        <span data-dz-remove>
-                            <img class="Icon  Icon__small Uploader__remove" src="/images/icons/ui/circle-remove.svg">
+                    <div class='Uploader__preview-item'>
+                        <span class="Uploader__remove" data-dz-remove>
+                            <object class="Icon__huge Uploader__icon" data="/images/icons/delete.svg" type="image/svg+xml"></object>
                         </span>
                         <img data-dz-thumbnail class='Uploader__image'>
                         <div class="Uploader__progress dz-progress">
@@ -46,7 +47,10 @@ module.exports = {
     methods: {
         setup() {
             this.setOptions();
-            this.uploader = new this.dropzone('.Uploader', this.options);
+            this.uploader = new this.dropzone(
+                '.Uploader__dropzone',
+                this.options
+            );
             this.setDefaultPhotos();
         },
         setOptions() {
@@ -56,6 +60,12 @@ module.exports = {
         },
         setDefaultPhotos() {
             var self = this;
+
+            if (typeof(this.photos) == 'undefined' ||
+                this.photos.length == 0) {
+                return true;
+            }
+
             this.photos.forEach((photo) => {
                 let mockFile = {name: photo.name, size: 1234};
                 var path = self.$http.options.root + '/' + photo.path;

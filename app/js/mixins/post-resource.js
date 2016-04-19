@@ -9,7 +9,7 @@ module.exports = {
             path: 'posts{/id}',
             post: {},
             posts: [],
-            loading: true,
+            loading: false,
             error: false,
             message: ''
         };
@@ -43,11 +43,11 @@ module.exports = {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);
             }, (response) => {
-                alert('Error creating new post');
+                this.$dispatch('error','Error creating new post');
             });
         },
 
-        createEmbryoPost() {
+        createEmbryoPost(callback) {
             let request = {
                 url: 'posts/embryo',
                 method: 'POST'
@@ -56,25 +56,28 @@ module.exports = {
             this.$http(request).then((response) => {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);
+                if (typeof callback == 'function') {
+                    callback();
+                }
             }, (response) => {
-                alert('Error creating new post');
+                this.$dispatch('error','Error creating new post');
             });
         },
 
         updatePost(id) {
             this.resource.update({id: id},this.post).then((response) => {
-                alert('Updated');
+                this.$dispatch('success','Post updated');
             }, (response) => {
-                alert('Error updating');
+                this.$dispatch('error','Error updating');
             });
         },
 
         deletePost(id) {
             this.resource.delete({id: id},this.post).then((response) => {
-                alert('Deleted');
+                this.$dispatch('success','Post deleted');
                 this.$router.go({path: '/posts'});
             }, (response) => {
-                alert('Error deleting');
+                this.$dispatch('error','Error deleting');
             });
         }
     },

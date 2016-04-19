@@ -1,12 +1,11 @@
 $brand-color: #17ADFB;
 $danger-color: #c0392b;
+$success-color: #3CD27B;
 
 $black: #252525;
 $white: #fff;
 $gray: #e5e5e5;
 $dark-gray: #a9a9a9;
-
-$success-color: #3CD27B;
 
 //transitions
 $transition-fast: all .2 cubic-bezier(.45,.01,.51,1);
@@ -18,3 +17,5 @@ $transition-fast-linear: all .1s linear;
 // Breakpoints
 $break-small: 600px;
 $break-medium: 800px;
+
+$articlewidth: 600px;

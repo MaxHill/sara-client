@@ -6,7 +6,6 @@ var Vue = proxyquire('../app/js/vue-register', {
 });
 
 module.exports = {
-
     /**
      * Hook up a component with a vue instance.
      *

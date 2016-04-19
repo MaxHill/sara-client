@@ -1,22 +1,24 @@
 <div class="Post-edit">
+    <div v-if="!loading && !loaded">
+        <h3>Pick a post to edit or create a brand new one!</h3>
+    </div>
     <loader v-if="loading">post</loader>
-    <div v-if="!loading">
+    <div v-if="loaded">
         <div class="Post-edit__header">
-            <button @click="updatePost(post.id)">Save</button>
-            <button @click="close()">Close</button>
+            <button class="Button Button--success Post-edit__save" @click="updatePost(post.id)">Save</button>
+            <button class="Button" @click="close()">Close</button>
         </div>
+
+        <input class="h1 Post-edit__title" v-model="post.title" type="text" placeholder="Title">
+
         <photo-upload
             :photos.sync="post.photos.data"
             :overrides="{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }">
         </photo-upload>
-        <input v-model="post.title" type="text" placeholder="Title">
-        <div v-if="post.content">
-            <trix :content.sync="post.content"></trix>
-        </div>
-        <br>
-        <button @click="updatePost(post.id)">Update</button>
 
-        <br><br><br><br>
-        <button @click="deletePost(post.id)">DELETE</button>
+        <trix :content.sync="post.content"></trix>
+        <div class="Post-edit__delete-container">
+            <button class="Button Button--danger Post-edit__delete" @click="deletePost(post.id)">DELETE</button>
+        </div>
     </div>
 </div>

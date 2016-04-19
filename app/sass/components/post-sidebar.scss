@@ -22,6 +22,28 @@
     justify-content: space-between;
     cursor: pointer;
     transition: $transition-medium;
+    border-left: 4px solid transparent;
+}
+
+.Post-sidebar--active {
+    border-left: 4px solid $success-color;
+}
+
+.Post-sidebar__create {
+    background: $gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: $transition-fast-linear;
+}
+
+.Post-sidebar__create-icon {
+    transition: $transition-fast-linear;
+}
+
+.Post-sidebar__create:hover .Post-sidebar__create-icon,
+.Post-sidebar__create:active .Post-sidebar__create-icon {
+    transform: scale(1.1);
 }
 
 .Post-sidebar__item--active {
@@ -31,10 +53,14 @@
 .Post-sidebar__item:hover {
     padding: 10px 8px 10px 12px;
 }
+.Post-sidebar__create:hover {
+    padding: 10px;
+}
 
 .Post-sidebar__title {
-    color: $dark-gray;
-}
-.Post-sidebar__icon {
-    float: right;
+    font-size: .8rem;
+    color: $black;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

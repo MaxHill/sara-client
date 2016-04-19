@@ -97,4 +97,18 @@ describe('The Post-Resource', () => {
     it('should have a plural variable "loading"', () => {
         expect(PostResource.loading).toBeDefined();
     });
+
+    it('should be able to call a callback when creating embryo post', () => {
+        // Create callback with fake bind method
+        PostResource.callback = function() {return {bind() {}};};
+        spyOn(PostResource, '$http').and.callThrough();
+        spyOn(PostResource, 'callback').and.callThrough();
+        PostResource.post = {data: 'mockdata'};
+
+        PostResource.createEmbryoPost(PostResource.callback);
+
+        expect(typeof PostResource.createEmbryoPost).toBe('function');
+        expect(PostResource.$http)
+            .toHaveBeenCalledWith({url: 'posts/embryo', method: 'POST'});
+    });
 });

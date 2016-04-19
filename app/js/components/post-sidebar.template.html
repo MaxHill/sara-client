@@ -1,11 +1,15 @@
 <div class="Post-sidebar">
     <ul class="Post-sidebar__list">
-        <li class="Post-sidebar__item Post-sidebar__create">
-            <object class="Icon__small Post-sidebar__create-icon" data="/images/icons/arrow-right.svg" type="image/svg+xml"></object>
+        <li @click="create()" class="Post-sidebar__item Post-sidebar__create">
+            <object class="Icon__medium Post-sidebar__create-icon" data="/images/icons/create.svg" type="image/svg+xml"></object>
         </li>
-        <li class="Post-sidebar__item" v-for="post in posts" @click="this.setEdit(post.id)">
+        <li
+            class="Post-sidebar__item"
+            v-bind:class="{'Post-sidebar--active': post.id == active}"
+            v-for="post in posts"
+            @click="this.setEdit(post.id)"
+            v-if="post.title">
             <span class="Post-sidebar__title">{{ post.title |truncate 35 }}</span>
-            <object class="Icon__small Post-sidebar__icon" data="/images/icons/arrow-right.svg" type="image/svg+xml"></object>
         </li>
     </ul>
 </div>

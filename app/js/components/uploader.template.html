@@ -1,6 +1,9 @@
-<form class="Uploader">
-    <div class="Uploader__message dz-message" data-dz-message>
-        <img class="Uploader__icon" src="http://placehold.it/50x50" alt="Upload icon">
-        <p class="Uploader__text">Drop profile-picture <br> here</p>
-    </div>
-</form>
+<div class="Uploader">
+    <form class="Uploader__dropzone">
+        <div class="Uploader__message dz-message" data-dz-message>
+            <object class="Icon__huge Uploader__icon" data="/images/icons/upload.svg" type="image/svg+xml"></object>
+            <p class="Uploader__text"><slot>Drag files here to upload</slot></p>
+        </div>
+    </form>
+    <div class="Uploader__previews"></div>
+</div>

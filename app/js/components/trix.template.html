@@ -1,39 +1,64 @@
-<trix-toolbar id="trix-toolbar-1">
-  <div class="button_groups">
-      <button type="button" class="bold" data-attribute="bold" data-key="b" title="Bold">
-          <img src="images/bold.svg" alt="bold">
-      </button>
-      <button type="button" class="italic" data-attribute="italic" data-key="i" title="Italic">
-          <img src="images/italic.svg" alt="italic">
-      </button>
-      <button type="button" class="link" data-attribute="href" data-action="link" data-key="k" title="Link">
-          <img src="images/link.svg" alt="link">
-      </button>
-      <button type="button" class="quote" data-attribute="quote" title="Quote">
-          <img src="images/quote.svg" alt="quote">
-      </button>
-      <button type="button" class="list bullets" data-attribute="bullet" title="Bullets">
-          <img src="images/list-bullet.svg" alt="list-bullet">
-      </button>
-      <button type="button" class="list numbers" data-attribute="number" title="Numbers">
-          <img src="images/list-numbers.svg" alt="list-numbers">
-      </button>
-  </div>
+<div class="Trix">
+    <div class="Trix__wraper">
+        <trix-toolbar class="Trix__toolbar" id="trix-toolbar-1">
+            <div class="button_groups">
+                <button type="button" class="Trix__button bold" data-attribute="bold" data-key="b" title="Bold">
+                    <object
+                        class="Icon__small"
+                        data="/images/icons/bold.svg"
+                        type="image/svg+xml"></object>
+                </button>
+                <button type="button" class="Trix__button italic" data-attribute="italic" data-key="i" title="Italic">
+                    <object
+                        class="Icon__small"
+                        data="/images/icons/italic.svg"
+                        type="image/svg+xml"></object>
+                </button>
+                <button type="button" class="Trix__button link" data-attribute="href" data-action="link" data-key="k" title="Link">
+                    <object
+                        class="Icon__small"
+                        data="/images/icons/link.svg"
+                        type="image/svg+xml"></object>
+                </button>
+                <button type="button" class="Trix__button quote" data-attribute="quote" title="Quote">
+                    <object
+                        class="Icon__small"
+                        data="/images/icons/quote.svg"
+                        type="image/svg+xml"></object>
+                </button>
+                <button type="button" class="Trix__button list bullets" data-attribute="bullet" title="Bullets">
+                    <object
+                        class="Icon__small"
+                        data="/images/icons/list-bullet.svg"
+                        type="image/svg+xml"></object>
+                </button>
+                <button type="button" class="Trix__button list numbers" data-attribute="number" title="Numbers">
+                    <object
+                        class="Icon__small"
+                        data="/images/icons/list-numbers.svg"
+                        type="image/svg+xml"></object>
+                </button>
+            </div>
 
-  <div class="dialogs">
-    <div class="dialog link_dialog" data-attribute="href" data-dialog="href">
-      <div class="link_url_fields">
-        <input type="url" required="" name="href" placeholder="Enter a URL…" disabled="disabled">
-        <div class="button_group">
-          <input type="button" value="Link" data-method="setAttribute">
-          <input type="button" value="Unlink" data-method="removeAttribute">
-        </div>
-      </div>
+            <div class="dialogs Trix__dialog">
+                <div class="dialog link_dialog" data-attribute="href" data-dialog="href">
+                    <div class="link_url_fields">
+                        <input type="url" required="" name="href" placeholder="Enter a URL…" disabled="disabled">
+                        <input class="Trix__dialog-button Button Button--success" type="button" value="Link" data-method="setAttribute">
+                        <input class="Trix__dialog-button Button Button--danger" type="button" value="Unlink" data-method="removeAttribute">
+                    </div>
+                </div>
+            </div>
+        </trix-toolbar>
+
+        <article>
+          <input v-model="content" id="editor" type="hidden" name="content">
+          <trix-editor
+              class="Trix__editor"
+              v-el="editor"
+              toolbar="trix-toolbar-1"
+              input="editor"
+              placeholder="Write here.."></trix-editor>
+        </article>
     </div>
-  </div>
-</trix-toolbar>
-
-<article>
-  <input v-model="content" id="editor" type="hidden" name="content">
-  <trix-editor v-el="editor" toolbar="trix-toolbar-1" input="editor" placeholder="Write here.."></trix-editor>
-</article>
+</div>
