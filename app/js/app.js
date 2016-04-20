@@ -15,6 +15,14 @@ var App = Vue.extend({
     },
     components: {
         navigation: require('./components/nav')
+    },
+    events: {
+        'success': function(message) {
+            alert('Success - ' + message);
+        },
+        'error': function(message) {
+            alert('Error - ' + message);
+        }
     }
 });
 
@@ -22,4 +30,3 @@ var VueRouter = require('vue-router');
 var Router = new VueRouter({history: true});
 Router.map(require('./routes.js'));
 Router.start(App, '#app');
-

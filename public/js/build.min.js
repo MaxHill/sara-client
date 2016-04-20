@@ -19,6 +19,14 @@ var App = Vue.extend({
 
     components: {
         navigation: require('./components/nav')
+    },
+    events: {
+        'success': function success(message) {
+            alert('Success - ' + message);
+        },
+        'error': function error(message) {
+            alert('Error - ' + message);
+        }
     }
 });
 
@@ -504,6 +512,7 @@ module.exports = {
         'create-post': function createPost(id) {
             var _this = this;
 
+            this.post = {};
             this.createEmbryoPost(function (post) {
                 _this.editing = true;
             });
@@ -514,6 +523,7 @@ module.exports = {
         },
         'edit-stop': function editStop() {
             this.editing = false;
+            this.$broadcast('edit-stop');
         }
     }
 };
