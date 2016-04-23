@@ -1,0 +1,14 @@
+<ul class="Notification">
+    <li
+        class="Notification__item Notification__item--{{ notification.type }}"
+        v-for="notification in notifications"
+        v-if="!notification.closed"
+        transition="Notification"
+        @click="close(notification)"
+        >
+        {{ notification.message }}
+        <div class="Notification__close">
+            <object class="Icon Icon__mini Notification__close-icon" data="/images/icons/close.svg" type="image/svg+xml"></object>
+        </div>
+        </li>
+</ul>

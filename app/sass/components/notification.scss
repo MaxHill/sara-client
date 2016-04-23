@@ -1,0 +1,66 @@
+.Notification {
+    position: fixed;
+    bottom: 1rem;
+    right: 0;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: .5rem;
+    cursor: pointer;
+    @media (min-width: $break-small) {
+        max-width: 300px;
+    }
+}
+
+.Notification__item {
+    list-style: none;
+    padding: 1rem;
+    color: $white;
+    background: $brand-color;
+    border-radius: 5px;
+    position: relative;
+    margin-top: .5rem;
+}
+
+.Notification__item:nth-child(1) {
+    margin-top: 0;
+}
+
+.Notification__item--success {
+    background: $success-color;
+}
+
+.Notification__item--error {
+    background: $danger-color;
+}
+
+.Notification__close {
+    position: absolute;
+    right: .4rem;
+    top: .4rem;
+    opacity: .5;
+    transition: $transition-fast;
+}
+
+.Notification__item:hover .Notification__close {
+    transform: scale(1.2);
+}
+
+
+/* always present */
+.Notification-transition {
+  transition: $transition-natural;
+  transform: translate3d(0,0,0);
+  opacity: 1;
+}
+
+/* .Notification-enter defines the starting state for entering */
+/* .Notification-leave defines the ending state for leaving */
+.Notification-enter {
+  transform: translate3d(0, -20px,0);
+  opacity: .4;
+}
+.Notification-leave {
+    transform: translate3d(0, 20px,0);
+    opacity: .2;
+}

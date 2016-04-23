@@ -616,6 +616,11 @@ input[type=checkbox]:focus + label svg {
   height: 30px;
 }
 
+.Icon__mini {
+  width: 16px;
+  height: 16px;
+}
+
 .Icon__small {
   width: 20px;
   height: 20px;
@@ -907,8 +912,8 @@ input[type=checkbox]:focus + label svg {
 }
 
 .Uploader__icon {
-  -webkit-transition: all 0.2s cubic-bezier(0.45, 0.01, 0.51, 1);
-  transition: all 0.2s cubic-bezier(0.45, 0.01, 0.51, 1);
+  -webkit-transition: all 0.3s cubic-bezier(0.45, 0.01, 0.51, 1);
+  transition: all 0.3s cubic-bezier(0.45, 0.01, 0.51, 1);
 }
 
 .Uploader__previews {
@@ -945,8 +950,8 @@ input[type=checkbox]:focus + label svg {
   opacity: .8;
   -webkit-transform: scale(0.8);
           transform: scale(0.8);
-  -webkit-transition: all 0.2s cubic-bezier(0.45, 0.01, 0.51, 1);
-  transition: all 0.2s cubic-bezier(0.45, 0.01, 0.51, 1);
+  -webkit-transition: all 0.3s cubic-bezier(0.45, 0.01, 0.51, 1);
+  transition: all 0.3s cubic-bezier(0.45, 0.01, 0.51, 1);
 }
 
 .Uploader__remove:hover {
@@ -1003,8 +1008,8 @@ input[type=checkbox]:focus + label svg {
       -ms-flex-pack: justify;
           justify-content: space-between;
   cursor: pointer;
-  -webkit-transition: all 0.2s cubic-bezier(0.45, 0.01, 0.51, 1);
-  transition: all 0.2s cubic-bezier(0.45, 0.01, 0.51, 1);
+  -webkit-transition: all 0.3s cubic-bezier(0.45, 0.01, 0.51, 1);
+  transition: all 0.3s cubic-bezier(0.45, 0.01, 0.51, 1);
   border-left: 4px solid transparent;
 }
 
@@ -1174,4 +1179,79 @@ input[type=checkbox]:focus + label svg {
 .Trix__editor:focus {
   outline: none;
   border-top: 1px solid #e5e5e5;
+}
+
+.Notification {
+  position: fixed;
+  bottom: 1rem;
+  right: 0;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: .5rem;
+  cursor: pointer;
+}
+@media (min-width: 600px) {
+  .Notification {
+    max-width: 300px;
+  }
+}
+
+.Notification__item {
+  list-style: none;
+  padding: 1rem;
+  color: #fff;
+  background: #17ADFB;
+  border-radius: 5px;
+  position: relative;
+  margin-top: .5rem;
+}
+
+.Notification__item:nth-child(1) {
+  margin-top: 0;
+}
+
+.Notification__item--success {
+  background: #3CD27B;
+}
+
+.Notification__item--error {
+  background: #c0392b;
+}
+
+.Notification__close {
+  position: absolute;
+  right: .4rem;
+  top: .4rem;
+  opacity: .5;
+  -webkit-transition: all 0.2s cubic-bezier(0.45, 0.01, 0.51, 1);
+  transition: all 0.2s cubic-bezier(0.45, 0.01, 0.51, 1);
+}
+
+.Notification__item:hover .Notification__close {
+  -webkit-transform: scale(1.2);
+          transform: scale(1.2);
+}
+
+/* always present */
+.Notification-transition {
+  -webkit-transition: all 0.4s cubic-bezier(0.45, 0.01, 0.51, 1);
+  transition: all 0.4s cubic-bezier(0.45, 0.01, 0.51, 1);
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+/* .Notification-enter defines the starting state for entering */
+/* .Notification-leave defines the ending state for leaving */
+.Notification-enter {
+  -webkit-transform: translate3d(0, -20px, 0);
+          transform: translate3d(0, -20px, 0);
+  opacity: .4;
+}
+
+.Notification-leave {
+  -webkit-transform: translate3d(0, 20px, 0);
+          transform: translate3d(0, 20px, 0);
+  opacity: .2;
 }

@@ -8,8 +8,8 @@ $gray: #e5e5e5;
 $dark-gray: #a9a9a9;
 
 //transitions
-$transition-fast: all .2 cubic-bezier(.45,.01,.51,1);
-$transition-medium: all .2s cubic-bezier(.45,.01,.51,1);
+$transition-fast: all .2s cubic-bezier(.45,.01,.51,1);
+$transition-medium: all .3s cubic-bezier(.45,.01,.51,1);
 $transition-natural: all .4s cubic-bezier(.45,.01,.51,1);
 
 $transition-fast-linear: all .1s linear;

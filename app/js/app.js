@@ -6,22 +6,22 @@ Vue.http.options.root = 'http://sara.app';
  * Vue root instance
  */
 var App = Vue.extend({
-    data() {
-        return {};
-    },
     ready() {
         // From example plugin
         this.$pluginSay();
     },
     components: {
-        navigation: require('./components/nav')
+        notifications: require('./components/notifications')
     },
     events: {
+        'notice': function(message) {
+            this.$broadcast('notice', message);
+        },
         'success': function(message) {
-            alert('Success - ' + message);
+            this.$broadcast('success', message);
         },
         'error': function(message) {
-            alert('Error - ' + message);
+            this.$broadcast('error', message);
         }
     }
 });

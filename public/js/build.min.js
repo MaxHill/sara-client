@@ -9,23 +9,23 @@ Vue.http.options.root = 'http://sara.app';
  * Vue root instance
  */
 var App = Vue.extend({
-    data: function data() {
-        return {};
-    },
     ready: function ready() {
         // From example plugin
         this.$pluginSay();
     },
 
     components: {
-        navigation: require('./components/nav')
+        notifications: require('./components/notifications')
     },
     events: {
+        'notice': function notice(message) {
+            this.$broadcast('notice', message);
+        },
         'success': function success(message) {
-            alert('Success - ' + message);
+            this.$broadcast('success', message);
         },
         'error': function error(message) {
-            alert('Error - ' + message);
+            this.$broadcast('error', message);
         }
     }
 });
@@ -35,7 +35,7 @@ var Router = new VueRouter({ history: true });
 Router.map(require('./routes.js'));
 Router.start(App, '#app');
 
-},{"./components/nav":6,"./routes.js":18,"./vue-register":31,"vue-router":58}],2:[function(require,module,exports){
+},{"./components/notifications":8,"./routes.js":20,"./vue-register":33,"vue-router":60}],2:[function(require,module,exports){
 'use strict';
 
 /**
@@ -92,6 +92,55 @@ module.exports = "<nav class=\"Nav\">\n    <ul class=\"Nav__items\">\n        <l
 'use strict';
 
 /**
+* The notifications component.
+* @type {Object}
+*/
+module.exports = {
+    template: require('./notifications.template.html'),
+    data: function data() {
+        return {
+            notifications: []
+        };
+    },
+
+    methods: {
+        close: function close(notification) {
+            notification.closed = true;
+        },
+        addNotification: function addNotification(type, message) {
+            var notification = { message: message, type: type, closed: false };
+            this.notifications.unshift(notification);
+            if (notification.type == 'error') {
+                return;
+            }
+            this.timeoutNotification(notification);
+        },
+        timeoutNotification: function timeoutNotification(notification) {
+            setTimeout(function () {
+                notification.closed = true;
+            }, 3000);
+        }
+    },
+    events: {
+        'notice': function notice(message) {
+            this.addNotification('notice', message);
+        },
+        'success': function success(message) {
+            this.addNotification('success', message);
+        },
+        'error': function error(message) {
+            this.addNotification('error', message);
+        }
+    }
+};
+
+},{"./notifications.template.html":9}],9:[function(require,module,exports){
+module.exports = "<ul class=\"Notification\">\n    <li\n        class=\"Notification__item Notification__item--{{ notification.type }}\"\n        v-for=\"notification in notifications\"\n        v-if=\"!notification.closed\"\n        transition=\"Notification\"\n        @click=\"close(notification)\"\n        >\n        {{ notification.message }}\n        <div class=\"Notification__close\">\n            <object class=\"Icon Icon__mini Notification__close-icon\" data=\"/images/icons/close.svg\" type=\"image/svg+xml\"></object>\n        </div>\n        </li>\n</ul>\n";
+
+},{}],10:[function(require,module,exports){
+'use strict';
+
+/**
  * The post-edit view.
  * @type {Object}
  */
@@ -123,10 +172,10 @@ module.exports = {
     }
 };
 
-},{"../components/loader":4,"../components/trix":12,"../components/uploader":14,"../mixins/post-resource":16,"./post-edit.template.html":9}],9:[function(require,module,exports){
+},{"../components/loader":4,"../components/trix":14,"../components/uploader":16,"../mixins/post-resource":18,"./post-edit.template.html":11}],11:[function(require,module,exports){
 module.exports = "<div class=\"Post-edit\">\n    <div v-if=\"!loading && !loaded\">\n        <h3>Pick a post to edit or create a brand new one!</h3>\n    </div>\n    <loader v-if=\"loading\">post</loader>\n    <div v-if=\"loaded\">\n        <div class=\"Post-edit__header\">\n            <button class=\"Button Button--success Post-edit__save\" @click=\"updatePost(post.id)\">Save</button>\n            <button class=\"Button\" @click=\"close()\">Close</button>\n        </div>\n\n        <input class=\"h1 Post-edit__title\" v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n\n        <photo-upload\n            :photos.sync=\"post.photos.data\"\n            :overrides=\"{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }\">\n        </photo-upload>\n\n        <trix :content.sync=\"post.content\"></trix>\n        <div class=\"Post-edit__delete-container\">\n            <button class=\"Button Button--danger Post-edit__delete\" @click=\"deletePost(post.id)\">DELETE</button>\n        </div>\n    </div>\n</div>\n";
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -160,10 +209,10 @@ module.exports = {
     }
 };
 
-},{"./post-sidebar.template.html":11}],11:[function(require,module,exports){
+},{"./post-sidebar.template.html":13}],13:[function(require,module,exports){
 module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li @click=\"create()\" class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__medium Post-sidebar__create-icon\" data=\"/images/icons/create.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li\n            class=\"Post-sidebar__item\"\n            v-bind:class=\"{'Post-sidebar--active': post.id == active}\"\n            v-for=\"post in posts\"\n            @click=\"this.setEdit(post.id)\"\n            v-if=\"post.title\">\n            <span class=\"Post-sidebar__title\">{{ post.title |truncate 35 }}</span>\n        </li>\n    </ul>\n</div>\n";
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -191,10 +240,10 @@ module.exports = {
     }
 };
 
-},{"./trix.template.html":13}],13:[function(require,module,exports){
+},{"./trix.template.html":15}],15:[function(require,module,exports){
 module.exports = "<div class=\"Trix\">\n    <div class=\"Trix__wraper\">\n        <trix-toolbar class=\"Trix__toolbar\" id=\"trix-toolbar-1\">\n            <div class=\"button_groups\">\n                <button type=\"button\" class=\"Trix__button bold\" data-attribute=\"bold\" data-key=\"b\" title=\"Bold\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/bold.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button italic\" data-attribute=\"italic\" data-key=\"i\" title=\"Italic\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/italic.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button link\" data-attribute=\"href\" data-action=\"link\" data-key=\"k\" title=\"Link\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/link.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button quote\" data-attribute=\"quote\" title=\"Quote\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/quote.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button list bullets\" data-attribute=\"bullet\" title=\"Bullets\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/list-bullet.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n                <button type=\"button\" class=\"Trix__button list numbers\" data-attribute=\"number\" title=\"Numbers\">\n                    <object\n                        class=\"Icon__small\"\n                        data=\"/images/icons/list-numbers.svg\"\n                        type=\"image/svg+xml\"></object>\n                </button>\n            </div>\n\n            <div class=\"dialogs Trix__dialog\">\n                <div class=\"dialog link_dialog\" data-attribute=\"href\" data-dialog=\"href\">\n                    <div class=\"link_url_fields\">\n                        <input type=\"url\" required=\"\" name=\"href\" placeholder=\"Enter a URL…\" disabled=\"disabled\">\n                        <input class=\"Trix__dialog-button Button Button--success\" type=\"button\" value=\"Link\" data-method=\"setAttribute\">\n                        <input class=\"Trix__dialog-button Button Button--danger\" type=\"button\" value=\"Unlink\" data-method=\"removeAttribute\">\n                    </div>\n                </div>\n            </div>\n        </trix-toolbar>\n\n        <article>\n          <input v-model=\"content\" id=\"editor\" type=\"hidden\" name=\"content\">\n          <trix-editor\n              class=\"Trix__editor\"\n              v-el=\"editor\"\n              toolbar=\"trix-toolbar-1\"\n              input=\"editor\"\n              placeholder=\"Write here..\"></trix-editor>\n        </article>\n    </div>\n</div>\n";
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -292,10 +341,10 @@ module.exports = {
     }
 };
 
-},{"./uploader.template.html":15,"dropzone":32}],15:[function(require,module,exports){
+},{"./uploader.template.html":17,"dropzone":34}],17:[function(require,module,exports){
 module.exports = "<div class=\"Uploader\">\n    <form class=\"Uploader__dropzone\">\n        <div class=\"Uploader__message dz-message\" data-dz-message>\n            <object class=\"Icon__huge Uploader__icon\" data=\"/images/icons/upload.svg\" type=\"image/svg+xml\"></object>\n            <p class=\"Uploader__text\"><slot>Drag files here to upload</slot></p>\n        </div>\n    </form>\n    <div class=\"Uploader__previews\"></div>\n</div>\n";
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 /**
@@ -395,7 +444,7 @@ module.exports = {
     }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 /**
@@ -413,7 +462,7 @@ function example(Vue, options) {
 
 module.exports = example;
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -448,7 +497,7 @@ module.exports = {
     }
 };
 
-},{"./views/404":19,"./views/admin":21,"./views/post":25,"./views/post-admin":23,"./views/posts":27,"./views/welcome":29}],19:[function(require,module,exports){
+},{"./views/404":21,"./views/admin":23,"./views/post":27,"./views/post-admin":25,"./views/posts":29,"./views/welcome":31}],21:[function(require,module,exports){
 'use strict';
 
 /**
@@ -462,10 +511,10 @@ module.exports = {
     }
 };
 
-},{"./404.template.html":20}],20:[function(require,module,exports){
+},{"./404.template.html":22}],22:[function(require,module,exports){
 module.exports = "<center><h2>404 - Not found</h2></center>\n";
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -479,10 +528,10 @@ module.exports = {
     }
 };
 
-},{"../components/nav":6,"./admin.template.html":22}],22:[function(require,module,exports){
+},{"../components/nav":6,"./admin.template.html":24}],24:[function(require,module,exports){
 module.exports = "<div class=\"Admin-page\">\n    <navigation></navigation>\n    <router-view></router-view>\n</div>\n";
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 /**
@@ -528,10 +577,10 @@ module.exports = {
     }
 };
 
-},{"../components/post-edit":8,"../components/post-sidebar":10,"../mixins/post-resource":16,"./post-admin.template.html":24}],24:[function(require,module,exports){
+},{"../components/post-edit":10,"../components/post-sidebar":12,"../mixins/post-resource":18,"./post-admin.template.html":26}],26:[function(require,module,exports){
 module.exports = "<div class=\"Post-admin-page\">\n    <post-sidebar\n        v-bind:class=\"{'Post-sidebar--small': editing}\"\n        :posts.sync=\"posts\"\n        ></post-sidebar>\n    <post-edit\n        v-bind:class=\"{'Post-edit--small': !editing}\"\n        :post.sync=\"post\"\n        ></post-edit>\n</div>\n";
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 /**
@@ -561,10 +610,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":16,"./post.template.html":26}],26:[function(require,module,exports){
+},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":18,"./post.template.html":28}],28:[function(require,module,exports){
 module.exports = "<div>\n    <loader v-if=\"loading\">post</loader>\n    <blog-article v-if=\"!loading\" :post.sync=\"post\"></blog-article>\n</div>\n";
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 /**
@@ -592,10 +641,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":16,"./posts.template.html":28}],28:[function(require,module,exports){
+},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":18,"./posts.template.html":30}],30:[function(require,module,exports){
 module.exports = "<div>\n    <loader v-if=\"loading\">posts</loader>\n\n    <div v-if=\"error\">\n        <h3>{{message}}</h3>\n    </div>\n\n    <section v-if=\"!loading\" v-for=\"post in posts\">\n        <blog-article :post.sync=\"post\"></blog-article>\n    </section>\n</div>\n";
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 /**
@@ -607,10 +656,10 @@ module.exports = {
   components: {}
 };
 
-},{"./welcome.template.html":30}],30:[function(require,module,exports){
+},{"./welcome.template.html":32}],32:[function(require,module,exports){
 module.exports = "<div>\n<h1>Hello</h1>\n    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda dolore distinctio officiis eius consequuntur aperiam neque ex voluptates odio repellat deserunt eos consequatur at amet tempora sequi, non sapiente.</p>\n</div>\n";
 
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 var Vue = require('vue');
@@ -639,7 +688,7 @@ Vue.filter('truncate', function (value, length) {
 
 module.exports = Vue;
 
-},{"./plugins/example":17,"vue":59,"vue-resource":47,"vue-router":58}],32:[function(require,module,exports){
+},{"./plugins/example":19,"vue":61,"vue-resource":49,"vue-router":60}],34:[function(require,module,exports){
 
 /*
  *
@@ -2408,7 +2457,7 @@ module.exports = Vue;
 
 }).call(this);
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2501,7 +2550,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /**
  * Before Interceptor.
  */
@@ -2521,7 +2570,7 @@ module.exports = {
 
 };
 
-},{"../util":57}],35:[function(require,module,exports){
+},{"../util":59}],37:[function(require,module,exports){
 /**
  * Base client.
  */
@@ -2588,7 +2637,7 @@ function parseHeaders(str) {
     return headers;
 }
 
-},{"../../promise":50,"../../util":57,"./xhr":38}],36:[function(require,module,exports){
+},{"../../promise":52,"../../util":59,"./xhr":40}],38:[function(require,module,exports){
 /**
  * JSONP client.
  */
@@ -2638,7 +2687,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":50,"../../util":57}],37:[function(require,module,exports){
+},{"../../promise":52,"../../util":59}],39:[function(require,module,exports){
 /**
  * XDomain client (Internet Explorer).
  */
@@ -2677,7 +2726,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":50,"../../util":57}],38:[function(require,module,exports){
+},{"../../promise":52,"../../util":59}],40:[function(require,module,exports){
 /**
  * XMLHttp client.
  */
@@ -2729,7 +2778,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":50,"../../util":57}],39:[function(require,module,exports){
+},{"../../promise":52,"../../util":59}],41:[function(require,module,exports){
 /**
  * CORS Interceptor.
  */
@@ -2768,7 +2817,7 @@ function crossOrigin(request) {
     return (requestUrl.protocol !== originUrl.protocol || requestUrl.host !== originUrl.host);
 }
 
-},{"../util":57,"./client/xdr":37}],40:[function(require,module,exports){
+},{"../util":59,"./client/xdr":39}],42:[function(require,module,exports){
 /**
  * Header Interceptor.
  */
@@ -2796,7 +2845,7 @@ module.exports = {
 
 };
 
-},{"../util":57}],41:[function(require,module,exports){
+},{"../util":59}],43:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -2896,7 +2945,7 @@ Http.headers = {
 
 module.exports = _.http = Http;
 
-},{"../promise":50,"../util":57,"./before":34,"./client":35,"./cors":39,"./header":40,"./interceptor":42,"./jsonp":43,"./method":44,"./mime":45,"./timeout":46}],42:[function(require,module,exports){
+},{"../promise":52,"../util":59,"./before":36,"./client":37,"./cors":41,"./header":42,"./interceptor":44,"./jsonp":45,"./method":46,"./mime":47,"./timeout":48}],44:[function(require,module,exports){
 /**
  * Interceptor factory.
  */
@@ -2943,7 +2992,7 @@ function when(value, fulfilled, rejected) {
     return promise.then(fulfilled, rejected);
 }
 
-},{"../promise":50,"../util":57}],43:[function(require,module,exports){
+},{"../promise":52,"../util":59}],45:[function(require,module,exports){
 /**
  * JSONP Interceptor.
  */
@@ -2963,7 +3012,7 @@ module.exports = {
 
 };
 
-},{"./client/jsonp":36}],44:[function(require,module,exports){
+},{"./client/jsonp":38}],46:[function(require,module,exports){
 /**
  * HTTP method override Interceptor.
  */
@@ -2982,7 +3031,7 @@ module.exports = {
 
 };
 
-},{}],45:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  * Mime Interceptor.
  */
@@ -3020,7 +3069,7 @@ module.exports = {
 
 };
 
-},{"../util":57}],46:[function(require,module,exports){
+},{"../util":59}],48:[function(require,module,exports){
 /**
  * Timeout Interceptor.
  */
@@ -3052,7 +3101,7 @@ module.exports = function () {
     };
 };
 
-},{}],47:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -3107,7 +3156,7 @@ if (window.Vue) {
 
 module.exports = install;
 
-},{"./http":41,"./promise":50,"./resource":51,"./url":52,"./util":57}],48:[function(require,module,exports){
+},{"./http":43,"./promise":52,"./resource":53,"./url":54,"./util":59}],50:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
  */
@@ -3288,7 +3337,7 @@ p.catch = function (onRejected) {
 
 module.exports = Promise;
 
-},{"../util":57}],49:[function(require,module,exports){
+},{"../util":59}],51:[function(require,module,exports){
 /**
  * URL Template v2.0.6 (https://github.com/bramstein/url-template)
  */
@@ -3440,7 +3489,7 @@ exports.encodeReserved = function (str) {
     }).join('');
 };
 
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /**
  * Promise adapter.
  */
@@ -3551,7 +3600,7 @@ p.always = function (callback) {
 
 module.exports = Promise;
 
-},{"./lib/promise":48,"./util":57}],51:[function(require,module,exports){
+},{"./lib/promise":50,"./util":59}],53:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -3663,7 +3712,7 @@ Resource.actions = {
 
 module.exports = _.resource = Resource;
 
-},{"./util":57}],52:[function(require,module,exports){
+},{"./util":59}],54:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -3795,7 +3844,7 @@ function serialize(params, obj, scope) {
 
 module.exports = _.url = Url;
 
-},{"../util":57,"./legacy":53,"./query":54,"./root":55,"./template":56}],53:[function(require,module,exports){
+},{"../util":59,"./legacy":55,"./query":56,"./root":57,"./template":58}],55:[function(require,module,exports){
 /**
  * Legacy Transform.
  */
@@ -3843,7 +3892,7 @@ function encodeUriQuery(value, spaces) {
         replace(/%20/g, (spaces ? '%20' : '+'));
 }
 
-},{"../util":57}],54:[function(require,module,exports){
+},{"../util":59}],56:[function(require,module,exports){
 /**
  * Query Parameter Transform.
  */
@@ -3869,7 +3918,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":57}],55:[function(require,module,exports){
+},{"../util":59}],57:[function(require,module,exports){
 /**
  * Root Prefix Transform.
  */
@@ -3887,7 +3936,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":57}],56:[function(require,module,exports){
+},{"../util":59}],58:[function(require,module,exports){
 /**
  * URL Template (RFC 6570) Transform.
  */
@@ -3905,7 +3954,7 @@ module.exports = function (options) {
     return url;
 };
 
-},{"../lib/url-template":49}],57:[function(require,module,exports){
+},{"../lib/url-template":51}],59:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -4029,7 +4078,7 @@ function merge(target, source, deep) {
     }
 }
 
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /*!
  * vue-router v0.7.11
  * (c) 2016 Evan You
@@ -6679,7 +6728,7 @@ function merge(target, source, deep) {
   return Router;
 
 }));
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v1.0.16
@@ -16275,5 +16324,5 @@ if (devtools) {
 module.exports = Vue;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":33}]},{},[1])
+},{"_process":35}]},{},[1])
 
