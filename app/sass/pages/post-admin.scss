@@ -1,5 +1,6 @@
 .Post-admin-page {
     width: 100%;
+    height: calc(100% - #{$nav-mobile});
     float: left;
     display: flex;
     .Post-sidebar {
@@ -13,6 +14,11 @@
     }
 }
 
+@media (min-width: $break-small){
+    .Post-admin-page {
+        height: calc(100% - #{$nav-desktop});
+    }
+}
 
 @media (min-width: $break-medium) {
     .Post-admin-page {

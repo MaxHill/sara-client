@@ -3,18 +3,17 @@
     display: block;
     float: left;
     margin: 0;
-    border-bottom: 1px solid $gray;
+    box-shadow: 0 1px 0 $gray;
 }
 
 .Nav__items {
     display: block;
-
     margin:0;
     padding:0;
     display: flex;
-    height: 3rem;
-    @media (min-width: 600px){
-        height: 2.2rem;
+    height: $nav-mobile;
+    @media (min-width: $break-small){
+        height: $nav-desktop;
     }
 }
 

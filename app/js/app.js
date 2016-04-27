@@ -1,15 +1,14 @@
 var Vue = require('./vue-register');
+var VueRouter = require('vue-router');
+var Config = require('./config');
 
-Vue.http.options.root = 'http://sara.app';
+Vue.http.options.root = Config.url;
 
 /**
  * Vue root instance
  */
-var App = Vue.extend({
-    ready() {
-        // From example plugin
-        this.$pluginSay();
-    },
+const App = Vue.extend({
+    ready() {},
     components: {
         notifications: require('./components/notifications')
     },
@@ -26,7 +25,6 @@ var App = Vue.extend({
     }
 });
 
-var VueRouter = require('vue-router');
-var Router = new VueRouter({history: true});
+const Router = new VueRouter({history: true});
 Router.map(require('./routes.js'));
 Router.start(App, '#app');

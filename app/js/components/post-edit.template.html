@@ -1,6 +1,6 @@
 <div class="Post-edit">
     <div v-if="!loading && !loaded">
-        <h3>Pick a post to edit or create a brand new one!</h3>
+        <h3 class="Post-edit__empty-header">Pick a post to edit or create a brand new one!</h3>
     </div>
     <loader v-if="loading">post</loader>
     <div v-if="loaded">

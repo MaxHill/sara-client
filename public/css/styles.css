@@ -401,7 +401,7 @@ html {
   box-sizing: inherit;
 }
 
-html, body {
+html, body, #app {
   height: 100%;
 }
 
@@ -575,8 +575,13 @@ input[type=checkbox]:focus + label svg {
   opacity: 1;
 }
 
+.Admin-page {
+  height: 100%;
+}
+
 .Post-admin-page {
   width: 100%;
+  height: calc(100% - 3rem);
   float: left;
   display: -webkit-box;
   display: -webkit-flex;
@@ -599,6 +604,11 @@ input[type=checkbox]:focus + label svg {
   display: none;
 }
 
+@media (min-width: 600px) {
+  .Post-admin-page {
+    height: calc(100% - 2.2rem);
+  }
+}
 @media (min-width: 800px) {
   .Post-admin-page .Post-sidebar {
     border-right: 1px solid #e5e5e5;
@@ -733,7 +743,7 @@ input[type=checkbox]:focus + label svg {
   display: block;
   float: left;
   margin: 0;
-  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 1px 0 #e5e5e5;
 }
 
 .Nav__items {
@@ -978,6 +988,10 @@ input[type=checkbox]:focus + label svg {
 
 .Post-sidebar {
   float: left;
+  height: 100%;
+  overflow-y: auto;
+  /* has to be scroll, not auto */
+  -webkit-overflow-scrolling: touch;
 }
 
 .Post-sidebar--small {
@@ -1033,6 +1047,10 @@ input[type=checkbox]:focus + label svg {
           align-items: center;
   -webkit-transition: all 0.1s linear;
   transition: all 0.1s linear;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 .Post-sidebar__create-icon {
@@ -1066,6 +1084,13 @@ input[type=checkbox]:focus + label svg {
   text-overflow: ellipsis;
 }
 
+.Post-edit {
+  height: 100%;
+  overflow-y: auto;
+  /* has to be scroll, not auto */
+  -webkit-overflow-scrolling: touch;
+}
+
 .Post-edit__header {
   width: 100%;
   float: left;
@@ -1083,6 +1108,13 @@ input[type=checkbox]:focus + label svg {
           align-items: center;
   border-bottom: 1px solid #e5e5e5;
   padding: .5rem 1rem;
+}
+
+.Post-edit__empty-header {
+  text-align: center;
+  margin-top: 5rem;
+  font-weight: 300;
+  color: #a9a9a9;
 }
 
 .Post-edit__title {
@@ -1254,4 +1286,15 @@ input[type=checkbox]:focus + label svg {
   -webkit-transform: translate3d(0, 20px, 0);
           transform: translate3d(0, 20px, 0);
   opacity: .2;
+}
+
+.Loader {
+  text-align: center;
+  margin-top: 5rem;
+  font-weight: 300;
+  color: #a9a9a9;
+}
+
+.Loader__header {
+  font-weight: 300;
 }

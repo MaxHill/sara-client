@@ -24,6 +24,7 @@ module.exports = {
                 this.$set('loading', false);
                 this.$set('error', true);
                 this.$set('message', 'Sorry no posts yet.');
+                this.$dispatch('error','Could not load posts');
             });
         },
 
@@ -33,6 +34,7 @@ module.exports = {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);
             }, (response) => {
+                this.$dispatch('error','Could not load the post');
                 this.$router.go({path: '/posts'});
             });
         },
@@ -43,7 +45,7 @@ module.exports = {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);
             }, (response) => {
-                this.$dispatch('error','Error creating new post');
+                this.$dispatch('error','Could not create new post');
             });
         },
 
@@ -60,7 +62,7 @@ module.exports = {
                     callback();
                 }
             }, (response) => {
-                this.$dispatch('error','Error creating new post');
+                this.$dispatch('error','Could not create new post');
             });
         },
 
@@ -68,7 +70,7 @@ module.exports = {
             this.resource.update({id: id},this.post).then((response) => {
                 this.$dispatch('success','Post updated');
             }, (response) => {
-                this.$dispatch('error','Error updating');
+                this.$dispatch('error','Could not update post');
             });
         },
 
@@ -77,7 +79,7 @@ module.exports = {
                 this.$dispatch('success','Post deleted');
                 this.$router.go({path: '/posts'});
             }, (response) => {
-                this.$dispatch('error','Error deleting');
+                this.$dispatch('error','Could not delete post');
             });
         }
     },

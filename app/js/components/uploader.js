@@ -99,7 +99,7 @@ module.exports = {
                             parentNode.
                             removeChild(file.previewElement);
                     }, () => {
-                        //error
+                       self.$dispatch('error', 'Could not delete photo');
                     });
                 }
             });
