@@ -3,7 +3,7 @@ module.exports = {
         component: require('./views/welcome')
     },
     '/admin': {
-        component: require('./views/admin'),
+        component: require('./views/admin/layout'),
         subRoutes: {
             '/': {
                 name: 'dashboard',
@@ -13,7 +13,7 @@ module.exports = {
             },
             '/posts': {
                 name: 'posts-admin',
-                component: require('./views/post-admin')
+                component: require('./views/admin/post')
             },
         }
     },

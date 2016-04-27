@@ -3,21 +3,17 @@
  * @type {Object}
  */
 module.exports = {
-    template: require('./post-admin.template.html'),
-    mixins: [require('../mixins/post-resource')],
+    template: require('./post.template.html'),
+    mixins: [require('../../mixins/post-resource')],
     data() {
         return {
-            posts: {},
             editing: false,
             post: {}
         };
     },
     components: {
-        postSidebar: require('../components/post-sidebar'),
-        postEdit: require('../components/post-edit')
-    },
-    ready() {
-        this.getPosts();
+        postSidebar: require('../../components/post-sidebar'),
+        postEdit: require('../../components/post-edit')
     },
     events: {
         'create-post': function(id) {

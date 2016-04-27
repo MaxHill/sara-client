@@ -5,10 +5,14 @@
 module.exports = {
     template: require('./post-sidebar.template.html'),
     props: ['editId', 'posts'],
+    mixins: [require('../mixins/post-resource')],
     data() {
         return {
             active: null
         };
+    },
+    ready() {
+        this.getPosts();
     },
     methods: {
         setEdit(id) {
