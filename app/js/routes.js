@@ -25,6 +25,10 @@ module.exports = {
         name: 'posts',
         component: require('./views/posts')
     },
+    '/login': {
+        name: 'login',
+        component: require('./views/login')
+    },
     '*': {
         component: require('./views/404')
     }

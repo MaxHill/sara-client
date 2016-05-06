@@ -30,10 +30,24 @@ var App = Vue.extend({
 });
 
 var Router = new VueRouter({ history: true });
+Router.beforeEach(function (_ref) {
+    var to = _ref.to;
+    var next = _ref.next;
+
+    var re = new RegExp("^/admin.*");
+    if (re.test(to.path)) {
+        if (Router.app.$isLoggedIn() == false) {
+            Router.go('/login');
+        }
+        return true;
+    } else {
+        next();
+    }
+});
 Router.map(require('./routes.js'));
 Router.start(App, '#app');
 
-},{"./components/notifications":8,"./config":19,"./routes.js":21,"./vue-register":34,"vue-router":61}],2:[function(require,module,exports){
+},{"./components/notifications":8,"./config":19,"./routes.js":22,"./vue-register":37,"vue-router":65}],2:[function(require,module,exports){
 'use strict';
 
 /**
@@ -343,7 +357,7 @@ module.exports = {
     }
 };
 
-},{"./uploader.template.html":17,"dropzone":35}],17:[function(require,module,exports){
+},{"./uploader.template.html":17,"dropzone":38}],17:[function(require,module,exports){
 module.exports = "<div class=\"Uploader\">\n    <form class=\"Uploader__dropzone\">\n        <div class=\"Uploader__message dz-message\" data-dz-message>\n            <object class=\"Icon__huge Uploader__icon\" data=\"/images/icons/upload.svg\" type=\"image/svg+xml\"></object>\n            <p class=\"Uploader__text\"><slot>Drag files here to upload</slot></p>\n        </div>\n    </form>\n    <div class=\"Uploader__previews\"></div>\n</div>\n";
 
 },{}],18:[function(require,module,exports){
@@ -377,11 +391,7 @@ module.exports = {
         return {
             resource: this.$resource('posts{/id}'),
             path: 'posts{/id}',
-            post: {},
-            posts: [],
-            loading: false,
-            error: false,
-            message: ''
+            loading: false
         };
     },
 
@@ -470,6 +480,62 @@ module.exports = {
 },{}],21:[function(require,module,exports){
 'use strict';
 
+var Store = require('store');
+/**
+ * Handles authentication.
+ *
+ * @param  {instance} Vue
+ * @param  {object} options
+ */
+
+module.exports = function (Vue, options) {
+    Vue.prototype.$isLoggedIn = function () {
+        var user = Store.get('user');
+        if (typeof user !== 'undefined' && new Date(user.timeout) > new Date()) {
+            return true;
+        }
+        this.$logout();
+        return false;
+    };
+
+    Vue.prototype.$login = function (email, password) {
+        var _this = this;
+
+        var request = {
+            url: 'authenticate',
+            method: 'POST',
+            data: { email: email, password: password }
+        };
+
+        this.$http(request).then(function (response) {
+            _this.$handleSuccessfullLogin(response);
+        }, function (response) {
+            _this.$dispatch('error', 'Could not login');
+        });
+    };
+
+    Vue.prototype.$logout = function () {
+        this.$http.headers.common['Authorization'] = null;
+        Store.remove('user');
+        return false;
+    };
+
+    Vue.prototype.$handleSuccessfullLogin = function (response) {
+        var token = 'Bearer ' + response.data.token;
+        this.$http.headers.common.Authorization = token;
+        // Save user to localstorage.
+        Store.set('user', {
+            token: token,
+            timeout: response.data.timeout
+        });
+
+        this.$router.go({ path: '/admin' });
+    };
+};
+
+},{"store":40}],22:[function(require,module,exports){
+'use strict';
+
 module.exports = {
     '/': {
         component: require('./views/welcome')
@@ -497,12 +563,16 @@ module.exports = {
         name: 'posts',
         component: require('./views/posts')
     },
+    '/login': {
+        name: 'login',
+        component: require('./views/login')
+    },
     '*': {
         component: require('./views/404')
     }
 };
 
-},{"./views/404":22,"./views/admin/layout":24,"./views/admin/post":26,"./views/post":28,"./views/posts":30,"./views/welcome":32}],22:[function(require,module,exports){
+},{"./views/404":23,"./views/admin/layout":25,"./views/admin/post":27,"./views/login":29,"./views/post":31,"./views/posts":33,"./views/welcome":35}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -516,10 +586,10 @@ module.exports = {
     }
 };
 
-},{"./404.template.html":23}],23:[function(require,module,exports){
+},{"./404.template.html":24}],24:[function(require,module,exports){
 module.exports = "<center><h2>404 - Not found</h2></center>\n";
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 /**
@@ -533,10 +603,10 @@ module.exports = {
     }
 };
 
-},{"../../components/nav":6,"./layout.template.html":25}],25:[function(require,module,exports){
+},{"../../components/nav":6,"./layout.template.html":26}],26:[function(require,module,exports){
 module.exports = "<div class=\"Admin-page\">\n    <navigation></navigation>\n    <router-view></router-view>\n</div>\n";
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 /**
@@ -577,10 +647,36 @@ module.exports = {
     }
 };
 
-},{"../../components/post-edit":10,"../../components/post-sidebar":12,"../../mixins/post-resource":20,"./post.template.html":27}],27:[function(require,module,exports){
-module.exports = "<div class=\"Post-admin-page\">\n    <post-sidebar\n        v-bind:class=\"{'Post-sidebar--small': editing}\"\n        :posts.sync=\"posts\"\n        ></post-sidebar>\n    <post-edit\n        v-bind:class=\"{'Post-edit--small': !editing}\"\n        :post.sync=\"post\"\n        ></post-edit>\n</div>\n";
+},{"../../components/post-edit":10,"../../components/post-sidebar":12,"../../mixins/post-resource":20,"./post.template.html":28}],28:[function(require,module,exports){
+module.exports = "<div class=\"Post-admin-page\">\n    <post-sidebar\n        v-bind:class=\"{'Post-sidebar--small': editing}\"\n        ></post-sidebar>\n    <post-edit\n        v-bind:class=\"{'Post-edit--small': !editing}\"\n        :post.sync=\"post\"\n        ></post-edit>\n</div>\n";
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
+'use strict';
+
+/**
+ * The login view.
+ * @type {Object}
+ */
+module.exports = {
+    template: require('./login.template.html'),
+    data: function data() {
+        return {
+            email: '',
+            password: ''
+        };
+    },
+
+    methods: {
+        login: function login() {
+            this.$login(this.email, this.password);
+        }
+    }
+};
+
+},{"./login.template.html":30}],30:[function(require,module,exports){
+module.exports = "<div class=\"Login\">\n    <form class=\"Login__form\" @submit.prevent=\"login\">\n        <h2 class=\"Login__title\">Login</h2>\n        <input class=\"Login__input\" type=\"text\" placeholder=\"Email\" v-model=\"email\">\n        <input class=\"Login__input\" type=\"password\" placeholder=\"Password\" v-model=\"password\">\n        <button type=\"submit\" class=\"Button\">Login</button>\n    </form>\n</div>\n";
+
+},{}],31:[function(require,module,exports){
 'use strict';
 
 /**
@@ -610,10 +706,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":20,"./post.template.html":29}],29:[function(require,module,exports){
+},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":20,"./post.template.html":32}],32:[function(require,module,exports){
 module.exports = "<div>\n    <loader v-if=\"loading\">post</loader>\n    <blog-article v-if=\"!loading\" :post.sync=\"post\"></blog-article>\n</div>\n";
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 /**
@@ -641,10 +737,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":20,"./posts.template.html":31}],31:[function(require,module,exports){
+},{"../components/article":2,"../components/loader":4,"../mixins/post-resource":20,"./posts.template.html":34}],34:[function(require,module,exports){
 module.exports = "<div>\n    <loader v-if=\"loading\">posts</loader>\n\n    <div v-if=\"error\">\n        <h3>{{message}}</h3>\n    </div>\n\n    <section v-if=\"!loading\" v-for=\"post in posts\">\n        <blog-article :post.sync=\"post\"></blog-article>\n    </section>\n</div>\n";
 
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 /**
@@ -656,10 +752,10 @@ module.exports = {
   components: {}
 };
 
-},{"./welcome.template.html":33}],33:[function(require,module,exports){
+},{"./welcome.template.html":36}],36:[function(require,module,exports){
 module.exports = "<div>\n<h1>Hello</h1>\n    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda dolore distinctio officiis eius consequuntur aperiam neque ex voluptates odio repellat deserunt eos consequatur at amet tempora sequi, non sapiente.</p>\n</div>\n";
 
-},{}],34:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 
 var Vue = require('vue');
@@ -669,6 +765,7 @@ var Vue = require('vue');
  */
 Vue.use(require('vue-router'));
 Vue.use(require('vue-resource'));
+Vue.use(require('./plugins/authenticate'));
 
 /**
  * Vue filter to truncate a string to the specified length.
@@ -687,7 +784,7 @@ Vue.filter('truncate', function (value, length) {
 
 module.exports = Vue;
 
-},{"vue":62,"vue-resource":50,"vue-router":61}],35:[function(require,module,exports){
+},{"./plugins/authenticate":21,"vue":66,"vue-resource":54,"vue-router":65}],38:[function(require,module,exports){
 
 /*
  *
@@ -2456,7 +2553,7 @@ module.exports = Vue;
 
 }).call(this);
 
-},{}],36:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2549,7 +2646,203 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],37:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
+(function (global){
+"use strict"
+// Module export pattern from
+// https://github.com/umdjs/umd/blob/master/returnExports.js
+;(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([], factory);
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory();
+    } else {
+        // Browser globals (root is window)
+        root.store = factory();
+  }
+}(this, function () {
+	
+	// Store.js
+	var store = {},
+		win = (typeof window != 'undefined' ? window : global),
+		doc = win.document,
+		localStorageName = 'localStorage',
+		scriptTag = 'script',
+		storage
+
+	store.disabled = false
+	store.version = '1.3.20'
+	store.set = function(key, value) {}
+	store.get = function(key, defaultVal) {}
+	store.has = function(key) { return store.get(key) !== undefined }
+	store.remove = function(key) {}
+	store.clear = function() {}
+	store.transact = function(key, defaultVal, transactionFn) {
+		if (transactionFn == null) {
+			transactionFn = defaultVal
+			defaultVal = null
+		}
+		if (defaultVal == null) {
+			defaultVal = {}
+		}
+		var val = store.get(key, defaultVal)
+		transactionFn(val)
+		store.set(key, val)
+	}
+	store.getAll = function() {}
+	store.forEach = function() {}
+
+	store.serialize = function(value) {
+		return JSON.stringify(value)
+	}
+	store.deserialize = function(value) {
+		if (typeof value != 'string') { return undefined }
+		try { return JSON.parse(value) }
+		catch(e) { return value || undefined }
+	}
+
+	// Functions to encapsulate questionable FireFox 3.6.13 behavior
+	// when about.config::dom.storage.enabled === false
+	// See https://github.com/marcuswestin/store.js/issues#issue/13
+	function isLocalStorageNameSupported() {
+		try { return (localStorageName in win && win[localStorageName]) }
+		catch(err) { return false }
+	}
+
+	if (isLocalStorageNameSupported()) {
+		storage = win[localStorageName]
+		store.set = function(key, val) {
+			if (val === undefined) { return store.remove(key) }
+			storage.setItem(key, store.serialize(val))
+			return val
+		}
+		store.get = function(key, defaultVal) {
+			var val = store.deserialize(storage.getItem(key))
+			return (val === undefined ? defaultVal : val)
+		}
+		store.remove = function(key) { storage.removeItem(key) }
+		store.clear = function() { storage.clear() }
+		store.getAll = function() {
+			var ret = {}
+			store.forEach(function(key, val) {
+				ret[key] = val
+			})
+			return ret
+		}
+		store.forEach = function(callback) {
+			for (var i=0; i<storage.length; i++) {
+				var key = storage.key(i)
+				callback(key, store.get(key))
+			}
+		}
+	} else if (doc && doc.documentElement.addBehavior) {
+		var storageOwner,
+			storageContainer
+		// Since #userData storage applies only to specific paths, we need to
+		// somehow link our data to a specific path.  We choose /favicon.ico
+		// as a pretty safe option, since all browsers already make a request to
+		// this URL anyway and being a 404 will not hurt us here.  We wrap an
+		// iframe pointing to the favicon in an ActiveXObject(htmlfile) object
+		// (see: http://msdn.microsoft.com/en-us/library/aa752574(v=VS.85).aspx)
+		// since the iframe access rules appear to allow direct access and
+		// manipulation of the document element, even for a 404 page.  This
+		// document can be used instead of the current document (which would
+		// have been limited to the current path) to perform #userData storage.
+		try {
+			storageContainer = new ActiveXObject('htmlfile')
+			storageContainer.open()
+			storageContainer.write('<'+scriptTag+'>document.w=window</'+scriptTag+'><iframe src="/favicon.ico"></iframe>')
+			storageContainer.close()
+			storageOwner = storageContainer.w.frames[0].document
+			storage = storageOwner.createElement('div')
+		} catch(e) {
+			// somehow ActiveXObject instantiation failed (perhaps some special
+			// security settings or otherwse), fall back to per-path storage
+			storage = doc.createElement('div')
+			storageOwner = doc.body
+		}
+		var withIEStorage = function(storeFunction) {
+			return function() {
+				var args = Array.prototype.slice.call(arguments, 0)
+				args.unshift(storage)
+				// See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
+				// and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
+				storageOwner.appendChild(storage)
+				storage.addBehavior('#default#userData')
+				storage.load(localStorageName)
+				var result = storeFunction.apply(store, args)
+				storageOwner.removeChild(storage)
+				return result
+			}
+		}
+
+		// In IE7, keys cannot start with a digit or contain certain chars.
+		// See https://github.com/marcuswestin/store.js/issues/40
+		// See https://github.com/marcuswestin/store.js/issues/83
+		var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
+		var ieKeyFix = function(key) {
+			return key.replace(/^d/, '___$&').replace(forbiddenCharsRegex, '___')
+		}
+		store.set = withIEStorage(function(storage, key, val) {
+			key = ieKeyFix(key)
+			if (val === undefined) { return store.remove(key) }
+			storage.setAttribute(key, store.serialize(val))
+			storage.save(localStorageName)
+			return val
+		})
+		store.get = withIEStorage(function(storage, key, defaultVal) {
+			key = ieKeyFix(key)
+			var val = store.deserialize(storage.getAttribute(key))
+			return (val === undefined ? defaultVal : val)
+		})
+		store.remove = withIEStorage(function(storage, key) {
+			key = ieKeyFix(key)
+			storage.removeAttribute(key)
+			storage.save(localStorageName)
+		})
+		store.clear = withIEStorage(function(storage) {
+			var attributes = storage.XMLDocument.documentElement.attributes
+			storage.load(localStorageName)
+			for (var i=attributes.length-1; i>=0; i--) {
+				storage.removeAttribute(attributes[i].name)
+			}
+			storage.save(localStorageName)
+		})
+		store.getAll = function(storage) {
+			var ret = {}
+			store.forEach(function(key, val) {
+				ret[key] = val
+			})
+			return ret
+		}
+		store.forEach = withIEStorage(function(storage, callback) {
+			var attributes = storage.XMLDocument.documentElement.attributes
+			for (var i=0, attr; attr=attributes[i]; ++i) {
+				callback(attr.name, store.deserialize(storage.getAttribute(attr.name)))
+			}
+		})
+	}
+
+	try {
+		var testKey = '__storejs__'
+		store.set(testKey, testKey)
+		if (store.get(testKey) != testKey) { store.disabled = true }
+		store.remove(testKey)
+	} catch(e) {
+		store.disabled = true
+	}
+	store.enabled = !store.disabled
+	
+	return store
+}));
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{}],41:[function(require,module,exports){
 /**
  * Before Interceptor.
  */
@@ -2569,7 +2862,7 @@ module.exports = {
 
 };
 
-},{"../util":60}],38:[function(require,module,exports){
+},{"../util":64}],42:[function(require,module,exports){
 /**
  * Base client.
  */
@@ -2636,7 +2929,7 @@ function parseHeaders(str) {
     return headers;
 }
 
-},{"../../promise":53,"../../util":60,"./xhr":41}],39:[function(require,module,exports){
+},{"../../promise":57,"../../util":64,"./xhr":45}],43:[function(require,module,exports){
 /**
  * JSONP client.
  */
@@ -2686,7 +2979,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":53,"../../util":60}],40:[function(require,module,exports){
+},{"../../promise":57,"../../util":64}],44:[function(require,module,exports){
 /**
  * XDomain client (Internet Explorer).
  */
@@ -2725,7 +3018,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":53,"../../util":60}],41:[function(require,module,exports){
+},{"../../promise":57,"../../util":64}],45:[function(require,module,exports){
 /**
  * XMLHttp client.
  */
@@ -2777,7 +3070,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":53,"../../util":60}],42:[function(require,module,exports){
+},{"../../promise":57,"../../util":64}],46:[function(require,module,exports){
 /**
  * CORS Interceptor.
  */
@@ -2816,7 +3109,7 @@ function crossOrigin(request) {
     return (requestUrl.protocol !== originUrl.protocol || requestUrl.host !== originUrl.host);
 }
 
-},{"../util":60,"./client/xdr":40}],43:[function(require,module,exports){
+},{"../util":64,"./client/xdr":44}],47:[function(require,module,exports){
 /**
  * Header Interceptor.
  */
@@ -2844,7 +3137,7 @@ module.exports = {
 
 };
 
-},{"../util":60}],44:[function(require,module,exports){
+},{"../util":64}],48:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -2944,7 +3237,7 @@ Http.headers = {
 
 module.exports = _.http = Http;
 
-},{"../promise":53,"../util":60,"./before":37,"./client":38,"./cors":42,"./header":43,"./interceptor":45,"./jsonp":46,"./method":47,"./mime":48,"./timeout":49}],45:[function(require,module,exports){
+},{"../promise":57,"../util":64,"./before":41,"./client":42,"./cors":46,"./header":47,"./interceptor":49,"./jsonp":50,"./method":51,"./mime":52,"./timeout":53}],49:[function(require,module,exports){
 /**
  * Interceptor factory.
  */
@@ -2991,7 +3284,7 @@ function when(value, fulfilled, rejected) {
     return promise.then(fulfilled, rejected);
 }
 
-},{"../promise":53,"../util":60}],46:[function(require,module,exports){
+},{"../promise":57,"../util":64}],50:[function(require,module,exports){
 /**
  * JSONP Interceptor.
  */
@@ -3011,7 +3304,7 @@ module.exports = {
 
 };
 
-},{"./client/jsonp":39}],47:[function(require,module,exports){
+},{"./client/jsonp":43}],51:[function(require,module,exports){
 /**
  * HTTP method override Interceptor.
  */
@@ -3030,7 +3323,7 @@ module.exports = {
 
 };
 
-},{}],48:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /**
  * Mime Interceptor.
  */
@@ -3068,7 +3361,7 @@ module.exports = {
 
 };
 
-},{"../util":60}],49:[function(require,module,exports){
+},{"../util":64}],53:[function(require,module,exports){
 /**
  * Timeout Interceptor.
  */
@@ -3100,7 +3393,7 @@ module.exports = function () {
     };
 };
 
-},{}],50:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -3155,7 +3448,7 @@ if (window.Vue) {
 
 module.exports = install;
 
-},{"./http":44,"./promise":53,"./resource":54,"./url":55,"./util":60}],51:[function(require,module,exports){
+},{"./http":48,"./promise":57,"./resource":58,"./url":59,"./util":64}],55:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
  */
@@ -3336,7 +3629,7 @@ p.catch = function (onRejected) {
 
 module.exports = Promise;
 
-},{"../util":60}],52:[function(require,module,exports){
+},{"../util":64}],56:[function(require,module,exports){
 /**
  * URL Template v2.0.6 (https://github.com/bramstein/url-template)
  */
@@ -3488,7 +3781,7 @@ exports.encodeReserved = function (str) {
     }).join('');
 };
 
-},{}],53:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /**
  * Promise adapter.
  */
@@ -3599,7 +3892,7 @@ p.always = function (callback) {
 
 module.exports = Promise;
 
-},{"./lib/promise":51,"./util":60}],54:[function(require,module,exports){
+},{"./lib/promise":55,"./util":64}],58:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -3711,7 +4004,7 @@ Resource.actions = {
 
 module.exports = _.resource = Resource;
 
-},{"./util":60}],55:[function(require,module,exports){
+},{"./util":64}],59:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -3843,7 +4136,7 @@ function serialize(params, obj, scope) {
 
 module.exports = _.url = Url;
 
-},{"../util":60,"./legacy":56,"./query":57,"./root":58,"./template":59}],56:[function(require,module,exports){
+},{"../util":64,"./legacy":60,"./query":61,"./root":62,"./template":63}],60:[function(require,module,exports){
 /**
  * Legacy Transform.
  */
@@ -3891,7 +4184,7 @@ function encodeUriQuery(value, spaces) {
         replace(/%20/g, (spaces ? '%20' : '+'));
 }
 
-},{"../util":60}],57:[function(require,module,exports){
+},{"../util":64}],61:[function(require,module,exports){
 /**
  * Query Parameter Transform.
  */
@@ -3917,7 +4210,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":60}],58:[function(require,module,exports){
+},{"../util":64}],62:[function(require,module,exports){
 /**
  * Root Prefix Transform.
  */
@@ -3935,7 +4228,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":60}],59:[function(require,module,exports){
+},{"../util":64}],63:[function(require,module,exports){
 /**
  * URL Template (RFC 6570) Transform.
  */
@@ -3953,7 +4246,7 @@ module.exports = function (options) {
     return url;
 };
 
-},{"../lib/url-template":52}],60:[function(require,module,exports){
+},{"../lib/url-template":56}],64:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -4077,7 +4370,7 @@ function merge(target, source, deep) {
     }
 }
 
-},{}],61:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /*!
  * vue-router v0.7.11
  * (c) 2016 Evan You
@@ -6727,7 +7020,7 @@ function merge(target, source, deep) {
   return Router;
 
 }));
-},{}],62:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v1.0.16
@@ -16323,5 +16616,5 @@ if (devtools) {
 module.exports = Vue;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":36}]},{},[1])
+},{"_process":39}]},{},[1])
 

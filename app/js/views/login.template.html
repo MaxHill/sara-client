@@ -1,0 +1,8 @@
+<div class="Login">
+    <form class="Login__form" @submit.prevent="login">
+        <h2 class="Login__title">Login</h2>
+        <input class="Login__input" type="text" placeholder="Email" v-model="email">
+        <input class="Login__input" type="password" placeholder="Password" v-model="password">
+        <button type="submit" class="Button">Login</button>
+    </form>
+</div>

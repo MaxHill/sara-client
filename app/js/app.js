@@ -26,5 +26,17 @@ const App = Vue.extend({
 });
 
 const Router = new VueRouter({history: true});
+Router.beforeEach(({to, next}) => {
+    let re = new RegExp("^/admin.*");
+    if (re.test(to.path)) {
+        if (Router.app.$isLoggedIn() == false) {
+            Router.go('/login');
+        }
+        return true;
+    } else {
+        next();
+    }
+});
 Router.map(require('./routes.js'));
 Router.start(App, '#app');
+

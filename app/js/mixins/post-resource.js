@@ -7,11 +7,7 @@ module.exports = {
         return {
             resource: this.$resource('posts{/id}'),
             path: 'posts{/id}',
-            post: {},
-            posts: [],
-            loading: false,
-            error: false,
-            message: ''
+            loading: false
         };
     },
     methods: {

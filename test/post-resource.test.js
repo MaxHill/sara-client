@@ -24,7 +24,7 @@ describe('The Post-Resource', () => {
             .toHaveBeenCalledWith({}, {include: []});
     });
 
-    it('should be able to iclude photos when getting all posts', () => {
+    it('should be able to include photos when getting all posts', () => {
         spyOn(PostResource.resource, 'get').and.callThrough();
 
         PostResource.getPosts(['photos']);
@@ -84,14 +84,6 @@ describe('The Post-Resource', () => {
         expect(typeof PostResource.updatePost).toBe('function');
         expect(PostResource.resource.update)
             .toHaveBeenCalledWith({id: 1},{data: 'mockdata'});
-    });
-
-    it('should have a singular variable "post"', () => {
-        expect(PostResource.post).toBeDefined();
-    });
-
-    it('should have a plural variable "posts"', () => {
-        expect(PostResource.posts).toBeDefined();
     });
 
     it('should have a plural variable "loading"', () => {

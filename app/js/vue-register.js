@@ -5,6 +5,7 @@ var Vue = require('vue');
  */
 Vue.use(require('vue-router'));
 Vue.use(require('vue-resource'));
+Vue.use(require('./plugins/authenticate'));
 
 /**
  * Vue filter to truncate a string to the specified length.

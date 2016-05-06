@@ -1,0 +1,28 @@
+.Login {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // background: url('https://images.unsplash.com/photo-1442405740009-7b57cca9d316?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=8ad0e3579b66e754924530ded828521b');
+    background: url('https://images.unsplash.com/photo-1433838552652-f9a46b332c40?crop=entropy&dpr=2&fit=crop&fm=jpg&h=800&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1450');
+    background-size: cover;
+}
+
+.Login__form {
+    background: $white;
+    padding: 1rem;
+    width: 350px;
+    max-width: 90%;
+    border-radius: 5px;
+    box-shadow: 0 0 38px rgba(0,0,0,0.30), 0 0 38px rgba(0,0,0,0.22);
+}
+
+.Login__input {
+    margin-bottom: 1rem;
+}
+
+.Login__title {
+    margin: 1rem 0 2rem 0;
+    text-align: center;
+}

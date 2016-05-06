@@ -1298,3 +1298,40 @@ input[type=checkbox]:focus + label svg {
 .Loader__header {
   font-weight: 300;
 }
+
+.Login {
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background: url("https://images.unsplash.com/photo-1433838552652-f9a46b332c40?crop=entropy&dpr=2&fit=crop&fm=jpg&h=800&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1450");
+  background-size: cover;
+}
+
+.Login__form {
+  background: #fff;
+  padding: 1rem;
+  width: 350px;
+  max-width: 90%;
+  border-radius: 5px;
+  box-shadow: 0 0 38px rgba(0, 0, 0, 0.3), 0 0 38px rgba(0, 0, 0, 0.22);
+}
+
+.Login__input {
+  margin-bottom: 1rem;
+}
+
+.Login__title {
+  margin: 1rem 0 2rem 0;
+  text-align: center;
+}

@@ -6,6 +6,20 @@ var Vue = proxyquire('../app/js/vue-register', {
 });
 
 module.exports = {
+
+    /**
+     * Instanciate a clean vue instance.
+     *
+     * @return {object}
+     */
+    bootstrapVue() {
+        let vm = new Vue({
+            template: '<div></div>',
+        }).$mount();
+
+        return vm;
+    },
+
     /**
      * Hook up a component with a vue instance.
      *
@@ -41,4 +55,9 @@ module.exports = {
 
         return vm.$refs.testComponent;
     },
+    getDate(minutes = 0) {
+        let timeout = new Date();
+        let addTime = minutes*60*1000; // 5 minutes in milliseconds
+        return timeout.setTime(timeout.getTime() + addTime);
+    }
 };
