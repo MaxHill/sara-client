@@ -5,11 +5,19 @@
         </li>
         <li
             class="Post-sidebar__item"
-            v-bind:class="{'Post-sidebar--active': post.id == active}"
             v-for="post in posts"
+            v-bind:class="{'Post-sidebar--active': post.id == active}"
             @click="this.setEdit(post.id)"
             v-if="post.title">
-            <span class="Post-sidebar__title">{{ post.title |truncate 35 }}</span>
+            <span
+                v-if="post.id !== active || !hasEditingPost"
+                class="Post-sidebar__title"
+                >{{ post.title |truncate 35 }}</span>
+            <span
+                v-if="post.id == active && hasEditingPost"
+                class="Post-sidebar__title"
+                >{{ editPost.title |truncate 35 }}</span>
+
         </li>
     </ul>
 </div>

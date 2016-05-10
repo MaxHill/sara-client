@@ -13,6 +13,7 @@ module.exports = (Vue, options) => {
             typeof(user) !== 'undefined' &&
             new Date(user.timeout) > new Date()
         ) {
+            Vue.http.headers.common['Authorization'] = user.token;
             return true;
         }
         this.$logout();
@@ -34,14 +35,15 @@ module.exports = (Vue, options) => {
     };
 
     Vue.prototype.$logout = function() {
-        this.$http.headers.common['Authorization'] = null;
+        Vue.http.headers.common['Authorization'] = null;
         Store.remove('user');
         return false;
     };
 
     Vue.prototype.$handleSuccessfullLogin = function(response) {
         let token = 'Bearer ' + response.data.token;
-        this.$http.headers.common.Authorization = token;
+        Vue.http.headers.common['Authorization'] = token;
+
         // Save user to localstorage.
         Store.set('user', {
             token,

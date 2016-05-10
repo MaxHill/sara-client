@@ -704,6 +704,10 @@ input[type=checkbox]:focus + label svg {
   background: #c0392b;
 }
 
+.Button--gray {
+  background: #e5e5e5;
+}
+
 .Button--medium {
   font-size: .9rem;
   padding: .2rem .4rem;
@@ -736,6 +740,30 @@ input[type=checkbox]:focus + label svg {
 
 .Button--success:active {
   background: #2ec76e;
+}
+
+.Button--danger:focus {
+  border: #6d2018 solid 1px;
+}
+
+.Button--danger:hover {
+  border: #ab3326 solid 1px;
+}
+
+.Button--danger:active {
+  background: #ab3326;
+}
+
+.Button--gray:focus {
+  border: #b2b2b2 solid 1px;
+}
+
+.Button--gray:hover {
+  border: #d8d8d8 solid 1px;
+}
+
+.Button--gray:active {
+  background: #d8d8d8;
 }
 
 .Nav {

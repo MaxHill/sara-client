@@ -5,7 +5,13 @@
     <loader v-if="loading">post</loader>
     <div v-if="loaded">
         <div class="Post-edit__header">
-            <button class="Button Button--success Post-edit__save" @click="updatePost(post.id)">Save</button>
+            <div class="">
+                <button class="Button Button--success Post-edit__save" @click="save(post.id)">Save</button>
+
+                <button v-if="post.status !== 'published'" class="Button Post-edit__save" @click="publish(post.id)">Publish</button>
+                <button v-if="post.status == 'published'" class="Button Button--gray Post-edit__save" @click="unpublish(post.id)">Unpublish</button>
+            </div>
+
             <button class="Button" @click="close()">Close</button>
         </div>
 

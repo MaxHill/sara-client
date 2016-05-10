@@ -20,6 +20,21 @@ module.exports = {
         close() {
             this.post = {};
             this.$dispatch('edit-stop');
+        },
+        save(id) {
+            this.updatePost(id, this.postUpdated());
+        },
+        publish(id) {
+            this.publishPost(id, this.setStatus('published'));
+        },
+        unpublish(id) {
+            this.publishPost(id, this.setStatus('unpublished'));
+        },
+        setStatus($status) {
+            this.post.status = $status;
+        },
+        postUpdated() {
+            this.$dispatch('saved', this.post);
         }
     },
     events: {

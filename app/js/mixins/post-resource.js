@@ -11,9 +11,9 @@ module.exports = {
         };
     },
     methods: {
-        getPosts(include = []) {
+        getPosts(include = [], filters = {}) {
             this.$set('loading', true);
-            this.resource.get({}, {include}).then((response) => {
+            this.resource.get({}, {include, filters}).then((response) => {
                 this.$set('posts', response.data.data);
                 this.$set('loading', false);
             }, (response) => {
@@ -24,9 +24,9 @@ module.exports = {
             });
         },
 
-        getPost(id, include = []) {
+        getPost(id, include = [], filters = {}) {
             this.$set('loading', true);
-            this.resource.get({id: id}, {include}).then((response) => {
+            this.resource.get({id}, {include, filters}).then((response) => {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);
             }, (response) => {
@@ -55,7 +55,39 @@ module.exports = {
                 this.$set('post', response.data.data);
                 this.$set('loading', false);
                 if (typeof callback == 'function') {
-                    callback();
+                    callback(response);
+                }
+            }, (response) => {
+                this.$dispatch('error','Could not create new post');
+            });
+        },
+
+        publishPost(id, callback) {
+            let request = {
+                url: `posts/${id}/publish`,
+                method: 'POST'
+            };
+
+            this.$http(request).then((response) => {
+                this.$dispatch('success','Post was published');
+                if (typeof callback == 'function') {
+                    callback(response);
+                }
+            }, (response) => {
+                this.$dispatch('error','Could not create new post');
+            });
+        },
+
+        unpublishPost(id, callback) {
+            let request = {
+                url: `posts/${id}/unpublish`,
+                method: 'POST'
+            };
+
+            this.$http(request).then((response) => {
+                this.$dispatch('success','Post was unpublished');
+                if (typeof callback == 'function') {
+                    callback(response);
                 }
             }, (response) => {
                 this.$dispatch('error','Could not create new post');

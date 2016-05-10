@@ -22,4 +22,9 @@ module.exports = (Vue, options) => {
             }
         };
     };
+    Vue.http = {
+        headers: {
+            common: []
+        }
+    };
 };

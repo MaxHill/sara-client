@@ -48,13 +48,10 @@ describe('Authentication', () => {
         let response = {
             data: {token: 'faketoken'}
         };
-        Authentication.$http = {headers: {common: []}};
         spyOn(Authentication.$router, 'go');
 
         Authentication.$handleSuccessfullLogin(response);
 
-        let Auth = Authentication.$http.headers.common['Authorization'];
-        expect(Auth).toBe('Bearer faketoken');
         expect(Authentication.$router.go)
             .toHaveBeenCalledWith(jasmine.objectContaining({path: '/admin'}));
     });
@@ -98,12 +95,9 @@ describe('Authentication', () => {
             token: 'Bearer faketoken',
             timeout: timeout
         });
-        Authentication.$http.headers.common['Authorization'] = 'Bearer faketoken';
 
         Authentication.$logout();
 
-        let Auth = Authentication.$http.headers.common['Authorization'];
-        expect(Auth).toBe(null);
         expect(typeof Store.get('user')).toBe('undefined');
     });
 

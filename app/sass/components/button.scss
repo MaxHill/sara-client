@@ -18,6 +18,10 @@
     background: $danger-color;
 }
 
+.Button--gray {
+    background: $gray;
+}
+
 .Button--medium {
     font-size: .9rem;
     padding: .2rem .4rem;
@@ -45,4 +49,24 @@
 }
 .Button--success:active {
     background: darken($success-color, 5%);
+}
+
+.Button--danger:focus {
+    border: darken($danger-color, 20%) solid 1px;
+}
+.Button--danger:hover {
+    border: darken($danger-color, 5%) solid 1px;
+}
+.Button--danger:active {
+    background: darken($danger-color, 5%);
+}
+
+.Button--gray:focus {
+    border: darken($gray, 20%) solid 1px;
+}
+.Button--gray:hover {
+    border: darken($gray, 5%) solid 1px;
+}
+.Button--gray:active {
+    background: darken($gray, 5%);
 }

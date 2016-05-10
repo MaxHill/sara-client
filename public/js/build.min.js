@@ -6,12 +6,14 @@ var VueRouter = require('vue-router');
 var Config = require('./config');
 
 Vue.http.options.root = Config.url;
-
+// Vue.http.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL3NhcmEuYXBwXC9hdXRoZW50aWNhdGUiLCJpYXQiOjE0NjI2MjY2OTEsImV4cCI6MTQ2MjYzMDI5MSwibmJmIjoxNDYyNjI2NjkxLCJqdGkiOiJlYTZiMWUxNTdhMDJhZWY1NmNmNDRhZjUwMjk3MzVjZCJ9.za1mhBvHV5xCgUSkkiIjvZJBXcFPcfFRrXUmgMhR5LA';
 /**
  * Vue root instance
  */
 var App = Vue.extend({
-    ready: function ready() {},
+    ready: function ready() {
+        Vue.http.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL3NhcmEuYXBwXC9hdXRoZW50aWNhdGUiLCJpYXQiOjE0NjI2MjY2OTEsImV4cCI6MTQ2MjYzMDI5MSwibmJmIjoxNDYyNjI2NjkxLCJqdGkiOiJlYTZiMWUxNTdhMDJhZWY1NmNmNDRhZjUwMjk3MzVjZCJ9.za1mhBvHV5xCgUSkkiIjvZJBXcFPcfFRrXUmgMhR5LA';
+    },
 
     components: {
         notifications: require('./components/notifications')
@@ -174,6 +176,21 @@ module.exports = {
         close: function close() {
             this.post = {};
             this.$dispatch('edit-stop');
+        },
+        save: function save(id) {
+            this.updatePost(id, this.postUpdated());
+        },
+        publish: function publish(id) {
+            this.publishPost(id, this.setStatus('published'));
+        },
+        unpublish: function unpublish(id) {
+            this.publishPost(id, this.setStatus('unpublished'));
+        },
+        setStatus: function setStatus($status) {
+            this.post.status = $status;
+        },
+        postUpdated: function postUpdated() {
+            this.$dispatch('saved', this.post);
         }
     },
     events: {
@@ -185,7 +202,7 @@ module.exports = {
 };
 
 },{"../components/loader":4,"../components/trix":14,"../components/uploader":16,"../mixins/post-resource":20,"./post-edit.template.html":11}],11:[function(require,module,exports){
-module.exports = "<div class=\"Post-edit\">\n    <div v-if=\"!loading && !loaded\">\n        <h3 class=\"Post-edit__empty-header\">Pick a post to edit or create a brand new one!</h3>\n    </div>\n    <loader v-if=\"loading\">post</loader>\n    <div v-if=\"loaded\">\n        <div class=\"Post-edit__header\">\n            <button class=\"Button Button--success Post-edit__save\" @click=\"updatePost(post.id)\">Save</button>\n            <button class=\"Button\" @click=\"close()\">Close</button>\n        </div>\n\n        <input class=\"h1 Post-edit__title\" v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n\n        <photo-upload\n            :photos.sync=\"post.photos.data\"\n            :overrides=\"{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }\">\n        </photo-upload>\n\n        <trix :content.sync=\"post.content\"></trix>\n        <div class=\"Post-edit__delete-container\">\n            <button class=\"Button Button--danger Post-edit__delete\" @click=\"deletePost(post.id)\">DELETE</button>\n        </div>\n    </div>\n</div>\n";
+module.exports = "<div class=\"Post-edit\">\n    <div v-if=\"!loading && !loaded\">\n        <h3 class=\"Post-edit__empty-header\">Pick a post to edit or create a brand new one!</h3>\n    </div>\n    <loader v-if=\"loading\">post</loader>\n    <div v-if=\"loaded\">\n        <div class=\"Post-edit__header\">\n            <div class=\"\">\n                <button class=\"Button Button--success Post-edit__save\" @click=\"save(post.id)\">Save</button>\n\n                <button v-if=\"post.status !== 'published'\" class=\"Button Post-edit__save\" @click=\"publish(post.id)\">Publish</button>\n                <button v-if=\"post.status == 'published'\" class=\"Button Button--gray Post-edit__save\" @click=\"unpublish(post.id)\">Unpublish</button>\n            </div>\n\n            <button class=\"Button\" @click=\"close()\">Close</button>\n        </div>\n\n        <input class=\"h1 Post-edit__title\" v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n\n        <photo-upload\n            :photos.sync=\"post.photos.data\"\n            :overrides=\"{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }\">\n        </photo-upload>\n\n        <trix :content.sync=\"post.content\"></trix>\n        <div class=\"Post-edit__delete-container\">\n            <button class=\"Button Button--danger Post-edit__delete\" @click=\"deletePost(post.id)\">DELETE</button>\n        </div>\n    </div>\n</div>\n";
 
 },{}],12:[function(require,module,exports){
 'use strict';
@@ -196,15 +213,28 @@ module.exports = "<div class=\"Post-edit\">\n    <div v-if=\"!loading && !loaded
  */
 module.exports = {
     template: require('./post-sidebar.template.html'),
-    props: ['editId', 'posts'],
+    props: ['editPost'],
     mixins: [require('../mixins/post-resource')],
     data: function data() {
         return {
+            posts: [],
             active: null
         };
     },
+
+    computed: {
+        hasEditingPost: function hasEditingPost() {
+            if (typeof this.editPost.id == 'undefined') {
+                return false;
+            }
+            return true;
+        },
+        blargh: function blargh() {
+            return 'blargh';
+        }
+    },
     ready: function ready() {
-        this.getPosts();
+        this.getPosts([], { unpublished: true });
     },
 
     methods: {
@@ -213,20 +243,37 @@ module.exports = {
         },
         create: function create() {
             this.$dispatch('create-post');
+        },
+        updatePost: function updatePost(post) {
+            var _this = this;
+
+            this.posts.some(function (item, i) {
+                if (item.id == post.id) {
+                    _this.posts.$set(i, post);
+                    return true;
+                }
+                return false;
+            });
         }
     },
     events: {
+        'created': function created(post) {
+            this.posts.push(post);
+        },
         'edit-start': function editStart(id) {
             this.active = id;
         },
         'edit-stop': function editStop() {
             this.active = null;
+        },
+        'saved': function saved(post) {
+            this.updatePost(post);
         }
     }
 };
 
 },{"../mixins/post-resource":20,"./post-sidebar.template.html":13}],13:[function(require,module,exports){
-module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li @click=\"create()\" class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__medium Post-sidebar__create-icon\" data=\"/images/icons/create.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li\n            class=\"Post-sidebar__item\"\n            v-bind:class=\"{'Post-sidebar--active': post.id == active}\"\n            v-for=\"post in posts\"\n            @click=\"this.setEdit(post.id)\"\n            v-if=\"post.title\">\n            <span class=\"Post-sidebar__title\">{{ post.title |truncate 35 }}</span>\n        </li>\n    </ul>\n</div>\n";
+module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li @click=\"create()\" class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__medium Post-sidebar__create-icon\" data=\"/images/icons/create.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li\n            class=\"Post-sidebar__item\"\n            v-for=\"post in posts\"\n            v-bind:class=\"{'Post-sidebar--active': post.id == active}\"\n            @click=\"this.setEdit(post.id)\"\n            v-if=\"post.title\">\n            <span\n                v-if=\"post.id !== active || !hasEditingPost\"\n                class=\"Post-sidebar__title\"\n                >{{ post.title |truncate 35 }}</span>\n            <span\n                v-if=\"post.id == active && hasEditingPost\"\n                class=\"Post-sidebar__title\"\n                >{{ editPost.title |truncate 35 }}</span>\n\n        </li>\n    </ul>\n</div>\n";
 
 },{}],14:[function(require,module,exports){
 'use strict';
@@ -400,9 +447,10 @@ module.exports = {
             var _this = this;
 
             var include = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+            var filters = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
             this.$set('loading', true);
-            this.resource.get({}, { include: include }).then(function (response) {
+            this.resource.get({}, { include: include, filters: filters }).then(function (response) {
                 _this.$set('posts', response.data.data);
                 _this.$set('loading', false);
             }, function (response) {
@@ -416,9 +464,10 @@ module.exports = {
             var _this2 = this;
 
             var include = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+            var filters = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
             this.$set('loading', true);
-            this.resource.get({ id: id }, { include: include }).then(function (response) {
+            this.resource.get({ id: id }, { include: include, filters: filters }).then(function (response) {
                 _this2.$set('post', response.data.data);
                 _this2.$set('loading', false);
             }, function (response) {
@@ -449,29 +498,63 @@ module.exports = {
                 _this4.$set('post', response.data.data);
                 _this4.$set('loading', false);
                 if (typeof callback == 'function') {
-                    callback();
+                    callback(response);
                 }
             }, function (response) {
                 _this4.$dispatch('error', 'Could not create new post');
             });
         },
-        updatePost: function updatePost(id) {
+        publishPost: function publishPost(id, callback) {
             var _this5 = this;
 
-            this.resource.update({ id: id }, this.post).then(function (response) {
-                _this5.$dispatch('success', 'Post updated');
+            var request = {
+                url: 'posts/' + id + '/publish',
+                method: 'POST'
+            };
+
+            this.$http(request).then(function (response) {
+                _this5.$dispatch('success', 'Post was published');
+                if (typeof callback == 'function') {
+                    callback(response);
+                }
             }, function (response) {
-                _this5.$dispatch('error', 'Could not update post');
+                _this5.$dispatch('error', 'Could not create new post');
+            });
+        },
+        unpublishPost: function unpublishPost(id, callback) {
+            var _this6 = this;
+
+            var request = {
+                url: 'posts/' + id + '/unpublish',
+                method: 'POST'
+            };
+
+            this.$http(request).then(function (response) {
+                _this6.$dispatch('success', 'Post was unpublished');
+                if (typeof callback == 'function') {
+                    callback(response);
+                }
+            }, function (response) {
+                _this6.$dispatch('error', 'Could not create new post');
+            });
+        },
+        updatePost: function updatePost(id) {
+            var _this7 = this;
+
+            this.resource.update({ id: id }, this.post).then(function (response) {
+                _this7.$dispatch('success', 'Post updated');
+            }, function (response) {
+                _this7.$dispatch('error', 'Could not update post');
             });
         },
         deletePost: function deletePost(id) {
-            var _this6 = this;
+            var _this8 = this;
 
             this.resource.delete({ id: id }, this.post).then(function (response) {
-                _this6.$dispatch('success', 'Post deleted');
-                _this6.$router.go({ path: '/posts' });
+                _this8.$dispatch('success', 'Post deleted');
+                _this8.$router.go({ path: '/posts' });
             }, function (response) {
-                _this6.$dispatch('error', 'Could not delete post');
+                _this8.$dispatch('error', 'Could not delete post');
             });
         }
     }
@@ -492,6 +575,7 @@ module.exports = function (Vue, options) {
     Vue.prototype.$isLoggedIn = function () {
         var user = Store.get('user');
         if (typeof user !== 'undefined' && new Date(user.timeout) > new Date()) {
+            Vue.http.headers.common['Authorization'] = user.token;
             return true;
         }
         this.$logout();
@@ -515,14 +599,15 @@ module.exports = function (Vue, options) {
     };
 
     Vue.prototype.$logout = function () {
-        this.$http.headers.common['Authorization'] = null;
+        Vue.http.headers.common['Authorization'] = null;
         Store.remove('user');
         return false;
     };
 
     Vue.prototype.$handleSuccessfullLogin = function (response) {
         var token = 'Bearer ' + response.data.token;
-        this.$http.headers.common.Authorization = token;
+        Vue.http.headers.common['Authorization'] = token;
+
         // Save user to localstorage.
         Store.set('user', {
             token: token,
@@ -634,6 +719,7 @@ module.exports = {
             this.post = {};
             this.createEmbryoPost(function (post) {
                 _this.editing = true;
+                _this.$broadcast('created', post);
             });
         },
         'edit-start': function editStart(id) {
@@ -643,12 +729,15 @@ module.exports = {
         'edit-stop': function editStop() {
             this.editing = false;
             this.$broadcast('edit-stop');
+        },
+        'saved': function saved(post) {
+            this.$broadcast('saved', post);
         }
     }
 };
 
 },{"../../components/post-edit":10,"../../components/post-sidebar":12,"../../mixins/post-resource":20,"./post.template.html":28}],28:[function(require,module,exports){
-module.exports = "<div class=\"Post-admin-page\">\n    <post-sidebar\n        v-bind:class=\"{'Post-sidebar--small': editing}\"\n        ></post-sidebar>\n    <post-edit\n        v-bind:class=\"{'Post-edit--small': !editing}\"\n        :post.sync=\"post\"\n        ></post-edit>\n</div>\n";
+module.exports = "<div class=\"Post-admin-page\">\n    <post-sidebar\n        v-bind:class=\"{'Post-sidebar--small': editing}\"\n        :edit-post.sync=\"post\"\n        ></post-sidebar>\n    <post-edit\n        v-bind:class=\"{'Post-edit--small': !editing}\"\n        :post.sync=\"post\"\n        ></post-edit>\n</div>\n";
 
 },{}],29:[function(require,module,exports){
 'use strict';

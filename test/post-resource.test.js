@@ -21,7 +21,7 @@ describe('The Post-Resource', () => {
 
         expect(typeof PostResource.getPosts).toBe('function');
         expect(PostResource.resource.get)
-            .toHaveBeenCalledWith({}, {include: []});
+            .toHaveBeenCalledWith({}, {include: [], filters: {}});
     });
 
     it('should be able to include photos when getting all posts', () => {
@@ -30,7 +30,7 @@ describe('The Post-Resource', () => {
         PostResource.getPosts(['photos']);
 
         expect(PostResource.resource.get)
-            .toHaveBeenCalledWith({}, {include: ['photos']});
+            .toHaveBeenCalledWith({}, {include: ['photos'], filters: {}});
     });
 
     it('should be able to get a post', () => {
@@ -40,7 +40,7 @@ describe('The Post-Resource', () => {
 
         expect(typeof PostResource.getPost).toBe('function');
         expect(PostResource.resource.get)
-            .toHaveBeenCalledWith({id: 1}, {include: []});
+            .toHaveBeenCalledWith({id: 1}, {include: [], filters: {}});
     });
 
     it('should be able to iclude photos when getting a post', () => {
@@ -50,7 +50,17 @@ describe('The Post-Resource', () => {
 
         expect(typeof PostResource.getPost).toBe('function');
         expect(PostResource.resource.get)
-            .toHaveBeenCalledWith({id: 1}, {include: ['photos']});
+            .toHaveBeenCalledWith({id: 1}, {include: ['photos'], filters:{}});
+    });
+
+    it('should be able to add filters when getting a post', () => {
+        spyOn(PostResource.resource, 'get').and.callThrough();
+
+        PostResource.getPost(1, [], {unpublished:true});
+
+        expect(typeof PostResource.getPost).toBe('function');
+        expect(PostResource.resource.get)
+            .toHaveBeenCalledWith({id: 1}, {include: [], filters:{unpublished: true}});
     });
 
     it('should be able to create a post', () => {
@@ -99,8 +109,39 @@ describe('The Post-Resource', () => {
 
         PostResource.createEmbryoPost(PostResource.callback);
 
-        expect(typeof PostResource.createEmbryoPost).toBe('function');
+        expect(PostResource.callback)
+            .toHaveBeenCalled();
         expect(PostResource.$http)
             .toHaveBeenCalledWith({url: 'posts/embryo', method: 'POST'});
+    });
+
+    it('should be able to publish post', () => {
+        // Create callback with fake bind method
+        PostResource.callback = function() {return {bind() {}};};
+        spyOn(PostResource, '$http').and.callThrough();
+        spyOn(PostResource, 'callback').and.callThrough();
+        PostResource.post = {data: 'mockdata'};
+
+        PostResource.publishPost(1, PostResource.callback);
+
+        expect(PostResource.callback)
+            .toHaveBeenCalled();
+        expect(PostResource.$http)
+            .toHaveBeenCalledWith({url: 'posts/1/publish', method: 'POST'});
+    });
+
+    it('should be able to unpublish post', () => {
+        // Create callback with fake bind method
+        PostResource.callback = function() {return {bind() {}};};
+        spyOn(PostResource, '$http').and.callThrough();
+        spyOn(PostResource, 'callback').and.callThrough();
+        PostResource.post = {data: 'mockdata'};
+
+        PostResource.unpublishPost(1, PostResource.callback);
+
+        expect(PostResource.callback)
+            .toHaveBeenCalled();
+        expect(PostResource.$http)
+            .toHaveBeenCalledWith({url: 'posts/1/unpublish', method: 'POST'});
     });
 });

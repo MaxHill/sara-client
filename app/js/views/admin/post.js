@@ -20,6 +20,7 @@ module.exports = {
             this.post = {};
             this.createEmbryoPost((post) => {
                 this.editing = true;
+                this.$broadcast('created', post);
             });
         },
         'edit-start': function(id) {
@@ -29,6 +30,9 @@ module.exports = {
         'edit-stop': function() {
             this.editing = false;
             this.$broadcast('edit-stop');
-        }
+        },
+        'saved': function(post) {
+            this.$broadcast('saved', post);
+        },
     }
 };
