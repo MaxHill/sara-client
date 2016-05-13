@@ -7,8 +7,7 @@
             class="Post-sidebar__item"
             v-for="post in posts"
             v-bind:class="{'Post-sidebar--active': post.id == active}"
-            @click="this.setEdit(post.id)"
-            v-if="post.title">
+            @click="this.setEdit(post.id)">
             <span
                 v-if="post.id !== active || !hasEditingPost"
                 class="Post-sidebar__title"

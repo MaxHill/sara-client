@@ -94,9 +94,12 @@ module.exports = {
             });
         },
 
-        updatePost(id) {
+        updatePost(id, callback) {
             this.resource.update({id: id},this.post).then((response) => {
                 this.$dispatch('success','Post updated');
+                if (typeof callback == 'function') {
+                    callback(response);
+                }
             }, (response) => {
                 this.$dispatch('error','Could not update post');
             });
@@ -104,8 +107,9 @@ module.exports = {
 
         deletePost(id) {
             this.resource.delete({id: id},this.post).then((response) => {
+                this.$set('post', null);
                 this.$dispatch('success','Post deleted');
-                this.$router.go({path: '/posts'});
+                this.$dispatch('deleted');
             }, (response) => {
                 this.$dispatch('error','Could not delete post');
             });

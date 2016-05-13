@@ -178,7 +178,7 @@ module.exports = {
             this.$dispatch('edit-stop');
         },
         save: function save(id) {
-            this.updatePost(id, this.postUpdated());
+            this.updatePost(id, this.postUpdated);
         },
         publish: function publish(id) {
             this.publishPost(id, this.setStatus('published'));
@@ -189,8 +189,8 @@ module.exports = {
         setStatus: function setStatus($status) {
             this.post.status = $status;
         },
-        postUpdated: function postUpdated() {
-            this.$dispatch('saved', this.post);
+        postUpdated: function postUpdated(post) {
+            this.post = post.data.data;
         }
     },
     events: {
@@ -254,17 +254,46 @@ module.exports = {
                 }
                 return false;
             });
+        },
+        removeEmbryoPosts: function removeEmbryoPosts() {
+            var _this2 = this;
+
+            this.posts.some(function (item, i) {
+                if (item.status == 'embryo') {
+                    _this2.posts.splice(i, 1);
+                    return true;
+                }
+                return false;
+            });
+        },
+        removePost: function removePost(id) {
+            var _this3 = this;
+
+            this.posts.some(function (item, i) {
+                if (item.id == id) {
+                    _this3.posts.splice(i, 1);
+                    return true;
+                }
+                return false;
+            });
         }
     },
     events: {
         'created': function created(post) {
-            this.posts.push(post);
+            this.active = post.id;
+            this.posts.unshift(post);
         },
         'edit-start': function editStart(id) {
             this.active = id;
         },
         'edit-stop': function editStop() {
             this.active = null;
+            this.removeEmbryoPosts();
+        },
+        'deleted': function deleted() {
+            this.removePost(this.active);
+            this.active = null;
+            this.removeEmbryoPosts();
         },
         'saved': function saved(post) {
             this.updatePost(post);
@@ -273,7 +302,7 @@ module.exports = {
 };
 
 },{"../mixins/post-resource":20,"./post-sidebar.template.html":13}],13:[function(require,module,exports){
-module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li @click=\"create()\" class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__medium Post-sidebar__create-icon\" data=\"/images/icons/create.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li\n            class=\"Post-sidebar__item\"\n            v-for=\"post in posts\"\n            v-bind:class=\"{'Post-sidebar--active': post.id == active}\"\n            @click=\"this.setEdit(post.id)\"\n            v-if=\"post.title\">\n            <span\n                v-if=\"post.id !== active || !hasEditingPost\"\n                class=\"Post-sidebar__title\"\n                >{{ post.title |truncate 35 }}</span>\n            <span\n                v-if=\"post.id == active && hasEditingPost\"\n                class=\"Post-sidebar__title\"\n                >{{ editPost.title |truncate 35 }}</span>\n\n        </li>\n    </ul>\n</div>\n";
+module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li @click=\"create()\" class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__medium Post-sidebar__create-icon\" data=\"/images/icons/create.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li\n            class=\"Post-sidebar__item\"\n            v-for=\"post in posts\"\n            v-bind:class=\"{'Post-sidebar--active': post.id == active}\"\n            @click=\"this.setEdit(post.id)\">\n            <span\n                v-if=\"post.id !== active || !hasEditingPost\"\n                class=\"Post-sidebar__title\"\n                >{{ post.title |truncate 35 }}</span>\n            <span\n                v-if=\"post.id == active && hasEditingPost\"\n                class=\"Post-sidebar__title\"\n                >{{ editPost.title |truncate 35 }}</span>\n\n        </li>\n    </ul>\n</div>\n";
 
 },{}],14:[function(require,module,exports){
 'use strict';
@@ -538,11 +567,14 @@ module.exports = {
                 _this6.$dispatch('error', 'Could not create new post');
             });
         },
-        updatePost: function updatePost(id) {
+        updatePost: function updatePost(id, callback) {
             var _this7 = this;
 
             this.resource.update({ id: id }, this.post).then(function (response) {
                 _this7.$dispatch('success', 'Post updated');
+                if (typeof callback == 'function') {
+                    callback(response);
+                }
             }, function (response) {
                 _this7.$dispatch('error', 'Could not update post');
             });
@@ -551,8 +583,9 @@ module.exports = {
             var _this8 = this;
 
             this.resource.delete({ id: id }, this.post).then(function (response) {
+                _this8.$set('post', null);
                 _this8.$dispatch('success', 'Post deleted');
-                _this8.$router.go({ path: '/posts' });
+                _this8.$dispatch('deleted');
             }, function (response) {
                 _this8.$dispatch('error', 'Could not delete post');
             });
@@ -719,7 +752,7 @@ module.exports = {
             this.post = {};
             this.createEmbryoPost(function (post) {
                 _this.editing = true;
-                _this.$broadcast('created', post);
+                _this.$broadcast('created', post.data.data);
             });
         },
         'edit-start': function editStart(id) {
@@ -730,8 +763,9 @@ module.exports = {
             this.editing = false;
             this.$broadcast('edit-stop');
         },
-        'saved': function saved(post) {
-            this.$broadcast('saved', post);
+        'deleted': function deleted() {
+            this.editing = false;
+            this.$broadcast('deleted');
         }
     }
 };
@@ -862,13 +896,16 @@ Vue.use(require('./plugins/authenticate'));
  * @param {String} value The value string.
  */
 Vue.filter('truncate', function (value, length) {
-  if (value.length < length) {
-    return value;
-  }
+    if (value == null) {
+        return '';
+    }
+    if (value.length < length) {
+        return value;
+    }
 
-  length = length - 3;
+    length = length - 3;
 
-  return value.substring(0, length) + '...';
+    return value.substring(0, length) + '...';
 });
 
 module.exports = Vue;

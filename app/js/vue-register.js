@@ -13,6 +13,9 @@ Vue.use(require('./plugins/authenticate'));
  * @param {String} value The value string.
  */
 Vue.filter('truncate', function(value, length) {
+    if (value == null) {
+        return '';
+    }
     if (value.length < length) {
         return value;
     }

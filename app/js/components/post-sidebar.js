@@ -41,17 +41,42 @@ module.exports = {
                 }
                 return false;
             });
+        },
+        removeEmbryoPosts() {
+            this.posts.some((item, i) => {
+                if (item.status == 'embryo') {
+                    this.posts.splice(i, 1);
+                    return true;
+                }
+                return false;
+            });
+        },
+        removePost(id) {
+            this.posts.some((item, i) => {
+                if (item.id == id) {
+                    this.posts.splice(i, 1);
+                    return true;
+                }
+                return false;
+            });
         }
     },
     events: {
         'created': function(post) {
-            this.posts.push(post);
+            this.active = post.id;
+            this.posts.unshift(post);
         },
         'edit-start': function(id) {
             this.active = id;
         },
         'edit-stop': function() {
             this.active = null;
+            this.removeEmbryoPosts();
+        },
+        'deleted': function() {
+            this.removePost(this.active);
+            this.active = null;
+            this.removeEmbryoPosts();
         },
         'saved': function(post) {
             this.updatePost(post);
