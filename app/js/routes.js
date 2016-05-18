@@ -1,6 +1,7 @@
 module.exports = {
     '/': {
-        component: require('./views/welcome')
+        name: 'posts',
+        component: require('./views/posts')
     },
     '/admin': {
         component: require('./views/admin/layout'),
@@ -16,14 +17,6 @@ module.exports = {
                 component: require('./views/admin/post')
             },
         }
-    },
-    'posts/:id': {
-        name: 'post',
-        component: require('./views/post')
-    },
-    '/posts': {
-        name: 'posts',
-        component: require('./views/posts')
     },
     '/login': {
         name: 'login',

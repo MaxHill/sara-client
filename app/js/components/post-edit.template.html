@@ -24,7 +24,7 @@
 
         <trix :content.sync="post.content"></trix>
         <div class="Post-edit__delete-container">
-            <button class="Button Button--danger Post-edit__delete" @click="deletePost(post.id)">DELETE</button>
+            <button class="Button Button--danger Post-edit__delete" @click="delete(post.id)">DELETE</button>
         </div>
     </div>
 </div>

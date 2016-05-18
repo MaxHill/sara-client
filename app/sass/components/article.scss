@@ -1,0 +1,39 @@
+.Article {
+    padding-bottom: 2rem;
+}
+.Article__header,
+.Article__text {
+    margin: 0 auto;
+    width: 90%;
+    max-width: $articlewidth;
+}
+
+.Article__title {
+    border:0;
+    text-align: center;
+    margin: 2rem 0 0 0;
+    line-height: 3rem;
+    text-decoration: none;
+    color: $black;
+    font-weight: 300;
+    width: 100%;
+    float: left;
+}
+
+.Article__created {
+    text-align: center;
+    color: $dark-gray;
+    font-weight: 100;
+}
+
+.Article__images {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.Article__image {
+    max-width: 100%;
+    margin-bottom: 1rem;
+}

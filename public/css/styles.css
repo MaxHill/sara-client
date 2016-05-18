@@ -1363,3 +1363,66 @@ input[type=checkbox]:focus + label svg {
   margin: 1rem 0 2rem 0;
   text-align: center;
 }
+
+.Article {
+  padding-bottom: 2rem;
+}
+
+.Article__header,
+.Article__text {
+  margin: 0 auto;
+  width: 90%;
+  max-width: 600px;
+}
+
+.Article__title {
+  border: 0;
+  text-align: center;
+  margin: 2rem 0 0 0;
+  line-height: 3rem;
+  text-decoration: none;
+  color: #252525;
+  font-weight: 300;
+  width: 100%;
+  float: left;
+}
+
+.Article__created {
+  text-align: center;
+  color: #a9a9a9;
+  font-weight: 100;
+}
+
+.Article__images {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.Article__image {
+  max-width: 100%;
+  margin-bottom: 1rem;
+}
+
+.Header__title {
+  font-size: 3rem;
+  font-weight: 100;
+  text-transform: uppercase;
+  letter-spacing: 2.5rem;
+  text-align: center;
+  line-height: 200px;
+}

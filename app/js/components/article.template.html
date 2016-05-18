@@ -1,6 +1,10 @@
-<article>
-    <img v-for="photo in post.photos.data" v-bind:src="$http.options.root +'/'+ photo.path_md" alt="Blog photo: {{ photo.name }}">
-    <h1><a v-link="{ name: 'post', params: { id: post.id } }">{{ post.title }}</a></h1>
-    <h5>{{ post.created }}</h5>
-    <p>{{{ post.content }}}</p>
+<article class="Article">
+    <div class="Article__header">
+        <h1 class="Article__title">{{ post.title }}</h1>
+        <h5 class="Article__created">{{ post.created }}</h5>
+    </div>
+    <div class="Article__images">
+        <img class="Article__image" v-for="photo in post.photos.data" v-bind:src="$http.options.root +'/'+ photo.path_md" alt="Blog photo: {{ photo.name }}">
+    </div>
+    <p class="Article__text">{{{ post.content }}}</p>
 </article>

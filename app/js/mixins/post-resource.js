@@ -105,11 +105,13 @@ module.exports = {
             });
         },
 
-        deletePost(id) {
+        deletePost(id, callback) {
             this.resource.delete({id: id},this.post).then((response) => {
-                this.$set('post', null);
                 this.$dispatch('success','Post deleted');
                 this.$dispatch('deleted');
+                if (typeof callback == 'function') {
+                    callback(response);
+                }
             }, (response) => {
                 this.$dispatch('error','Could not delete post');
             });

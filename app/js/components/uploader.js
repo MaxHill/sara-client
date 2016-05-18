@@ -24,6 +24,9 @@ module.exports = {
                 acceptedFiles: '.jpg, .jpeg, .png, .gif',
                 removedfile: this.delete,
                 success: this.addToPhotos,
+                headers: {
+                    'Authorization': null
+                },
                 // jscs:disable
                 previewTemplate: `
                     <div class='Uploader__preview-item'>
@@ -42,6 +45,7 @@ module.exports = {
         };
     },
     ready() {
+        this.options.headers.Authorization = this.$http.headers.common['Authorization'];
         this.setup();
     },
     methods: {

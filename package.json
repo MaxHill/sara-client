@@ -54,7 +54,7 @@
     "start": "gulp",
     "test": "karma start --single-run",
     "generate:page": "node  ./commands/generate-page.js",
-    "generate:component": "node  ./commands/generate-component.js",
+    "generate:component": "node ./commands/generate-component.js",
     "generate:mixin": "node  ./commands/generate-mixin.js",
     "generate:test": "node  ./commands/generate-test.js"
   },

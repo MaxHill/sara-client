@@ -19,6 +19,11 @@ module.exports = (Vue, options) => {
         return {
             then(func1, func2) {
                 return func1({data: 'test'});
+            },
+            headers: {
+                common: {
+                    'Authorization': 'faketoken'
+                }
             }
         };
     };

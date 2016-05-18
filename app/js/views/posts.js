@@ -11,6 +11,7 @@ module.exports = {
 
     components: {
         blogArticle: require('../components/article'),
+        siteHeader: require('../components/header'),
         loader: require('../components/loader')
     },
 

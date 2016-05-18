@@ -35,6 +35,9 @@ module.exports = {
         },
         postUpdated(post) {
             this.post = post.data.data;
+        },
+        delete(id) {
+            this.deletePost(id, this.close);
         }
     },
     events: {
