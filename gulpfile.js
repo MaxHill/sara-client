@@ -39,11 +39,11 @@ function compile(watch) {
             .pipe(buffer())
             .pipe(sourcemaps.init({loadMaps: true}))
             .pipe(gulp.dest('./public/js'))
-            // .pipe(uglify({
-            //     compress: {
-            //         negate_iife: false
-            //     }
-            // }))
+            .pipe(uglify({
+                compress: {
+                    negate_iife: false
+                }
+            }))
             .pipe(rename({suffix: '.min'}))
             .pipe(gulp.dest('./public/js'))
             .pipe(gzip({ preExtension: 'gz' }))
@@ -115,6 +115,8 @@ gulp.task('lintJs', function() {
 
 gulp.task('html', function() {
     gulp.src('./app/index.html')
+    .pipe(gulp.dest('./public'))
+    .pipe(rename({basename: '200'}))
     .pipe(gulp.dest('./public'));
 });
 
