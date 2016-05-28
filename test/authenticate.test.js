@@ -7,6 +7,7 @@ describe('Authentication', () => {
     beforeEach(() => {
         Authentication = Help.bootstrapVue();
         Authentication.$router = {go: ()=> {}};
+        Store.remove('user');
     });
 
     it('should exist', () => {
@@ -64,7 +65,7 @@ describe('Authentication', () => {
 
     it('should return false if authentication has timed out', () => {
         Authentication.$http = {headers: {common: []}};
-        let timeout = Help.getDate(-5);
+        let timeout = Help.getDateString(-5);
         Store.set('user', {
             token: 'Bearer faketoken',
             timeout: timeout
@@ -75,7 +76,7 @@ describe('Authentication', () => {
     });
 
     it('should logout the user if authentication fails', () => {
-        let timeout = Help.getDate(-5);
+        let timeout = Help.getDateString(-5);
         spyOn(Authentication, '$logout');
 
         Store.set('user', {
@@ -90,7 +91,7 @@ describe('Authentication', () => {
 
     it('should be able to logout a user', () => {
         Authentication.$http = {headers: {common: []}};
-        let timeout = Help.getDate(5);
+        let timeout = Help.getDateString(5);
         Store.set('user', {
             token: 'Bearer faketoken',
             timeout: timeout
@@ -102,7 +103,7 @@ describe('Authentication', () => {
     });
 
     it('should return true if authentication has not timed out', () => {
-        let timeout = Help.getDate(5);
+        let timeout = Help.getDateString(5);
         Store.set('user', {
             token: 'Bearer faketoken',
             timeout: timeout

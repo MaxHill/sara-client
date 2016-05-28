@@ -9,12 +9,13 @@ const Store = require('store');
 module.exports = (Vue, options) => {
     Vue.prototype.$isLoggedIn = function() {
         let user = Store.get('user');
-        if (
-            typeof(user) !== 'undefined' &&
-            new Date(user.timeout) > new Date()
-        ) {
-            Vue.http.headers.common['Authorization'] = user.token;
-            return true;
+
+        if (typeof(user) !== 'undefined') {
+            let timeoutIso = user.timeout.replace(' ', 'T');
+            if (new Date(timeoutIso) > new Date()) {
+                Vue.http.headers.common['Authorization'] = user.token;
+                return true;
+            }
         }
         this.$logout();
         return false;

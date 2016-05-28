@@ -76,7 +76,7 @@ module.exports = {
 };
 
 },{"./header.template.html":5}],5:[function(require,module,exports){
-module.exports = "<div class=\"Header\">\n    <h1 class=\"Header__title\">Sara Hill</h1>\n</div>\n";
+module.exports = "<div class=\"Header\">\n</div>\n";
 
 },{}],6:[function(require,module,exports){
 'use strict';
@@ -630,9 +630,13 @@ var Store = require('store');
 module.exports = function (Vue, options) {
     Vue.prototype.$isLoggedIn = function () {
         var user = Store.get('user');
-        if (typeof user !== 'undefined' && new Date(user.timeout) > new Date()) {
-            Vue.http.headers.common['Authorization'] = user.token;
-            return true;
+
+        if (typeof user !== 'undefined') {
+            var timeoutIso = user.timeout.replace(' ', 'T');
+            if (new Date(timeoutIso) > new Date()) {
+                Vue.http.headers.common['Authorization'] = user.token;
+                return true;
+            }
         }
         this.$logout();
         return false;

@@ -59,5 +59,11 @@ module.exports = {
         let timeout = new Date();
         let addTime = minutes*60*1000; // 5 minutes in milliseconds
         return timeout.setTime(timeout.getTime() + addTime);
+    },
+    getDateString(minutes = 0) {
+        let timeout = new Date();
+        let addTime = minutes*60*1000; // 5 minutes in milliseconds
+        let date = new Date(timeout.setTime(timeout.getTime() + addTime)).toISOString();
+        return date.replace('T', ' ').substring(0, date.length - 5);;
     }
 };
