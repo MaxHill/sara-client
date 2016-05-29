@@ -978,12 +978,14 @@ input[type=checkbox]:focus + label svg {
 
 .Uploader__preview-item {
   position: relative;
+  padding-bottom: 1rem;
+  max-width: 100%;
 }
 
 .Uploader__remove {
   position: absolute;
-  right: 1rem;
-  top: 1rem;
+  right: .5rem;
+  top: .5rem;
   cursor: pointer;
   opacity: .8;
   -webkit-transform: scale(0.8);
@@ -1012,6 +1014,23 @@ input[type=checkbox]:focus + label svg {
 .Uploader__dropzone:hover,
 .dz-drag-hover {
   border-color: #a9a9a9;
+}
+
+.Uploader__progress {
+  width: 95%;
+  margin-left: 2.5%;
+  height: .3rem;
+  border-radius: .15rem;
+  overflow: hidden;
+}
+
+.Uploader__uploaded {
+  height: .3rem;
+  background: #3CD27B;
+}
+
+.dz-complete .Uploader__progress {
+  display: none;
 }
 
 .Post-sidebar {

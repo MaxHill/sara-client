@@ -74,23 +74,18 @@ describe('Uploader', () => {
         };
         // Mock options
         Uploader.uploader = {
-            options: {
-                addedfile: {call() {return true;}},
-                thumbnail: {call() {return true;}}
-            }
+            emit: function(opt1, opt2){return true},
         };
         // Test photos
         Uploader.photos = [
             {name: 'example-name', path: 'example-path'},
             {name: 'example-name2', path: 'example-path2'}
         ];
-        let addedfile = spyOn(Uploader.uploader.options.addedfile, 'call');
-        let thumbnail = spyOn(Uploader.uploader.options.thumbnail, 'call');
+        let uploaded = spyOn(Uploader.uploader, 'emit');
 
         Uploader.setDefaultPhotos();
 
-        expect(addedfile.calls.count()).toBe(2);
-        expect(thumbnail.calls.count()).toBe(2);
+        expect(uploaded.calls.count()).toBe(6); // It's called 3 times per file.
     });
 
     it('should be able to delete a photo', () => {

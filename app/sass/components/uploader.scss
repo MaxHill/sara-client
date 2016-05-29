@@ -53,12 +53,14 @@
 
 .Uploader__preview-item {
     position: relative;
+    padding-bottom: 1rem;
+    max-width:100%;
 }
 
 .Uploader__remove {
     position: absolute;
-    right: 1rem;
-    top: 1rem;
+    right: .5rem;
+    top: .5rem;
     cursor: pointer;
     opacity: .8;
     transform: scale(.8);
@@ -83,4 +85,22 @@
 .Uploader__dropzone:hover,
 .dz-drag-hover {
     border-color: $dark-gray;
+}
+
+
+.Uploader__progress {
+    width:95%;
+    margin-left: 2.5%;
+    height: .3rem;
+    border-radius: .15rem;
+    overflow: hidden;
+}
+
+.Uploader__uploaded {
+    height: .3rem;
+    background: $success-color;
+}
+
+.dz-complete .Uploader__progress {
+    display:none;
 }

@@ -5,6 +5,7 @@ try {
 
 var config = {
     url: 'http://sara.app'
+    // url: 'http://sara.hilloco.se'
 };
 
 module.exports = Object.assign(config,configDev);

@@ -377,6 +377,8 @@ module.exports = {
                 url: '/',
                 paramName: 'photo',
                 maxFilesize: 4,
+                thumbnailWidth: null,
+                thumbnailHeight: null,
                 previewsContainer: '.Uploader__previews',
                 acceptedFiles: '.jpg, .jpeg, .png, .gif',
                 removedfile: this.delete,
@@ -416,8 +418,24 @@ module.exports = {
             this.photos.forEach(function (photo) {
                 var mockFile = { name: photo.name, size: 1234 };
                 var path = self.$http.options.root + '/' + photo.path;
-                self.uploader.options.addedfile.call(self.uploader, mockFile);
-                self.uploader.options.thumbnail.call(self.uploader, mockFile, path);
+                // Call the default addedfile event handler
+                self.uploader.emit('addedfile', mockFile);
+
+                // And optionally show the thumbnail of the file:
+                self.uploader.emit('thumbnail', mockFile, path);
+
+                // Make sure that there is no progress bar, etc...
+                self.uploader.emit('complete', mockFile);
+
+                // self.uploader.options.addedfile.call(
+                //     self.uploader,
+                //     mockFile
+                // );
+                // self.uploader.options.thumbnail.call(
+                //     self.uploader,
+                //     mockFile,
+                //     path
+                // );
             });
         },
         delete: function _delete(file) {
@@ -472,6 +490,7 @@ try {
 
 var config = {
     url: 'http://sara.app'
+    // url: 'http://sara.hilloco.se'
 };
 
 module.exports = Object.assign(config, configDev);
