@@ -18,7 +18,7 @@ module.exports = {
                 return false;
             }
             return true;
-        };
+        }
     },
     ready() {
         this.getPosts([],{unpublished: true});

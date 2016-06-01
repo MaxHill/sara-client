@@ -6,15 +6,11 @@ var VueRouter = require('vue-router');
 var Config = require('./config');
 
 Vue.http.options.root = Config.url;
-// Vue.http.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL3NhcmEuYXBwXC9hdXRoZW50aWNhdGUiLCJpYXQiOjE0NjI2MjY2OTEsImV4cCI6MTQ2MjYzMDI5MSwibmJmIjoxNDYyNjI2NjkxLCJqdGkiOiJlYTZiMWUxNTdhMDJhZWY1NmNmNDRhZjUwMjk3MzVjZCJ9.za1mhBvHV5xCgUSkkiIjvZJBXcFPcfFRrXUmgMhR5LA';
+
 /**
  * Vue root instance
  */
 var App = Vue.extend({
-    ready: function ready() {
-        Vue.http.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL3NhcmEuYXBwXC9hdXRoZW50aWNhdGUiLCJpYXQiOjE0NjI2MjY2OTEsImV4cCI6MTQ2MjYzMDI5MSwibmJmIjoxNDYyNjI2NjkxLCJqdGkiOiJlYTZiMWUxNTdhMDJhZWY1NmNmNDRhZjUwMjk3MzVjZCJ9.za1mhBvHV5xCgUSkkiIjvZJBXcFPcfFRrXUmgMhR5LA';
-    },
-
     components: {
         notifications: require('./components/notifications')
     },
@@ -36,7 +32,7 @@ Router.beforeEach(function (_ref) {
     var to = _ref.to;
     var next = _ref.next;
 
-    var re = new RegExp("^/admin.*");
+    var re = new RegExp('^/admin.*');
     if (re.test(to.path)) {
         if (Router.app.$isLoggedIn() == false) {
             Router.go('/login');
@@ -245,9 +241,6 @@ module.exports = {
                 return false;
             }
             return true;
-        },
-        blargh: function blargh() {
-            return 'blargh';
         }
     },
     ready: function ready() {
