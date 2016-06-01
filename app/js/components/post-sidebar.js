@@ -18,10 +18,7 @@ module.exports = {
                 return false;
             }
             return true;
-        },
-        blargh() {
-            return 'blargh'
-        }
+        };
     },
     ready() {
         this.getPosts([],{unpublished: true});

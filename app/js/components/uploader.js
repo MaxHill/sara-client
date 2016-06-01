@@ -84,7 +84,6 @@ module.exports = {
                 // Make sure that there is no progress bar, etc...
                 self.uploader.emit('complete', mockFile);
 
-
                 // self.uploader.options.addedfile.call(
                 //     self.uploader,
                 //     mockFile
@@ -115,7 +114,7 @@ module.exports = {
                             parentNode.
                             removeChild(file.previewElement);
                     }, () => {
-                       self.$dispatch('error', 'Could not delete photo');
+                        self.$dispatch('error', 'Could not delete photo');
                     });
                 }
             });

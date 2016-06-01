@@ -3,14 +3,11 @@ var VueRouter = require('vue-router');
 var Config = require('./config');
 
 Vue.http.options.root = Config.url;
-// Vue.http.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL3NhcmEuYXBwXC9hdXRoZW50aWNhdGUiLCJpYXQiOjE0NjI2MjY2OTEsImV4cCI6MTQ2MjYzMDI5MSwibmJmIjoxNDYyNjI2NjkxLCJqdGkiOiJlYTZiMWUxNTdhMDJhZWY1NmNmNDRhZjUwMjk3MzVjZCJ9.za1mhBvHV5xCgUSkkiIjvZJBXcFPcfFRrXUmgMhR5LA';
+
 /**
  * Vue root instance
  */
 const App = Vue.extend({
-    ready() {
-        Vue.http.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL3NhcmEuYXBwXC9hdXRoZW50aWNhdGUiLCJpYXQiOjE0NjI2MjY2OTEsImV4cCI6MTQ2MjYzMDI5MSwibmJmIjoxNDYyNjI2NjkxLCJqdGkiOiJlYTZiMWUxNTdhMDJhZWY1NmNmNDRhZjUwMjk3MzVjZCJ9.za1mhBvHV5xCgUSkkiIjvZJBXcFPcfFRrXUmgMhR5LA';
-    },
     components: {
         notifications: require('./components/notifications')
     },
@@ -29,7 +26,7 @@ const App = Vue.extend({
 
 const Router = new VueRouter({history: true});
 Router.beforeEach(({to, next}) => {
-    let re = new RegExp("^/admin.*");
+    let re = new RegExp('^/admin.*');
     if (re.test(to.path)) {
         if (Router.app.$isLoggedIn() == false) {
             Router.go('/login');

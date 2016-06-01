@@ -4,8 +4,8 @@ try {
 } catch (e) {}
 
 var config = {
-    url: 'http://sara.app'
-    // url: 'http://sara.hilloco.se'
+    // url: 'http://sara.app'
+    url: 'http://api.hilloco.se'
 };
 
 module.exports = Object.assign(config,configDev);

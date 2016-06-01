@@ -4,11 +4,11 @@
  */
 module.exports = {
     template: require('./login.template.html'),
-    data(){
+    data() {
         return {
             email: '',
             password: ''
-        }
+        };
     },
     methods: {
         login() {
