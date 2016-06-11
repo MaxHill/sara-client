@@ -47,7 +47,9 @@ module.exports = {
         };
     },
     ready() {
+        // jscs:disable
         this.options.headers.Authorization = this.$http.headers.common['Authorization'];
+        // jscs:enable
         this.setup();
     },
     methods: {

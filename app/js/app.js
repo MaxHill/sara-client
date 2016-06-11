@@ -38,4 +38,3 @@ Router.beforeEach(({to, next}) => {
 });
 Router.map(require('./routes.js'));
 Router.start(App, '#app');
-
