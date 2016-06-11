@@ -194,7 +194,7 @@ module.exports = {
             this.publishPost(id, this.setStatus('published'));
         },
         unpublish: function unpublish(id) {
-            this.publishPost(id, this.setStatus('unpublished'));
+            this.unpublishPost(id, this.setStatus('unpublished'));
         },
         setStatus: function setStatus($status) {
             this.post.status = $status;
@@ -380,7 +380,7 @@ module.exports = {
                     'Authorization': null
                 },
                 // jscs:disable
-                previewTemplate: '\n                    <div class=\'Uploader__preview-item\'>\n                        <span class="Uploader__remove" data-dz-remove>\n                            <object class="Icon__huge Uploader__icon" data="/images/icons/delete.svg" type="image/svg+xml"></object>\n                        </span>\n                        <img data-dz-thumbnail class=\'Uploader__image\'>\n                        <div class="Uploader__progress dz-progress">\n                            <div class="Uploader__uploaded dz-upload" data-dz-uploadprogress>\n                            </div>\n                        </div>\n                        <div data-dz-errormessage></div>\n                    </div>'
+                previewTemplate: '\n                    <div class=\'Uploader__preview-item\'>\n                        <span class="Uploader__remove" data-dz-remove>\n                            <img class="Icon__huge Uploader__icon" src="/images/icons/delete.svg"></img>\n                        </span>\n                        <img data-dz-thumbnail class=\'Uploader__image\'>\n                        <div class="Uploader__progress dz-progress">\n                            <div class="Uploader__uploaded dz-upload" data-dz-uploadprogress>\n                            </div>\n                        </div>\n                        <div data-dz-errormessage></div>\n                    </div>'
                 // jscs:enable
             }
         };
@@ -472,8 +472,7 @@ module.exports = "<div class=\"Uploader\">\n    <form class=\"Uploader__dropzone
 'use strict';
 
 module.exports = {
-    url: 'http://api.hilloco.se',
-    test: 'testing'
+    url: 'http://sara.app'
 };
 
 },{}],21:[function(require,module,exports){

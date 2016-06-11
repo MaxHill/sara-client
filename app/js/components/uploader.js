@@ -33,7 +33,7 @@ module.exports = {
                 previewTemplate: `
                     <div class='Uploader__preview-item'>
                         <span class="Uploader__remove" data-dz-remove>
-                            <object class="Icon__huge Uploader__icon" data="/images/icons/delete.svg" type="image/svg+xml"></object>
+                            <img class="Icon__huge Uploader__icon" src="/images/icons/delete.svg"></img>
                         </span>
                         <img data-dz-thumbnail class='Uploader__image'>
                         <div class="Uploader__progress dz-progress">

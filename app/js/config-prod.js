@@ -1,4 +1,3 @@
 module.exports = {
-    url: 'http://api.hilloco.se',
-    test: 'testing'
+    url: 'http://api.hilloco.se'
 };

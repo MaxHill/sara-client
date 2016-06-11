@@ -28,7 +28,7 @@ module.exports = {
             this.publishPost(id, this.setStatus('published'));
         },
         unpublish(id) {
-            this.publishPost(id, this.setStatus('unpublished'));
+            this.unpublishPost(id, this.setStatus('unpublished'));
         },
         setStatus($status) {
             this.post.status = $status;
