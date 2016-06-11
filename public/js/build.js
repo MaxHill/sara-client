@@ -45,7 +45,7 @@ Router.beforeEach(function (_ref) {
 Router.map(require('./routes.js'));
 Router.start(App, '#app');
 
-},{"./components/notifications":10,"./config":21,"./routes.js":24,"./vue-register":35,"vue-router":63}],2:[function(require,module,exports){
+},{"./components/notifications":10,"./config":20,"./routes.js":23,"./vue-register":34,"vue-router":62}],2:[function(require,module,exports){
 'use strict';
 
 /**
@@ -214,7 +214,7 @@ module.exports = {
     }
 };
 
-},{"../components/loader":6,"../components/trix":16,"../components/uploader":18,"../mixins/post-resource":22,"./post-edit.template.html":13}],13:[function(require,module,exports){
+},{"../components/loader":6,"../components/trix":16,"../components/uploader":18,"../mixins/post-resource":21,"./post-edit.template.html":13}],13:[function(require,module,exports){
 module.exports = "<div class=\"Post-edit\">\n    <div v-if=\"!loading && !loaded\">\n        <h3 class=\"Post-edit__empty-header\">Pick a post to edit or create a brand new one!</h3>\n    </div>\n    <loader v-if=\"loading\">post</loader>\n    <div v-if=\"loaded\">\n        <div class=\"Post-edit__header\">\n            <div class=\"\">\n                <button class=\"Button Button--success Post-edit__save\" @click=\"save(post.id)\">Save</button>\n\n                <button v-if=\"post.status !== 'published'\" class=\"Button Post-edit__save\" @click=\"publish(post.id)\">Publish</button>\n                <button v-if=\"post.status == 'published'\" class=\"Button Button--gray Post-edit__save\" @click=\"unpublish(post.id)\">Unpublish</button>\n            </div>\n\n            <button class=\"Button\" @click=\"close()\">Close</button>\n        </div>\n\n        <input class=\"h1 Post-edit__title\" v-model=\"post.title\" type=\"text\" placeholder=\"Title\">\n\n        <photo-upload\n            :photos.sync=\"post.photos.data\"\n            :overrides=\"{ url: this.$http.options.root + '/posts/' + post.id + '/photos' }\">\n        </photo-upload>\n\n        <trix :content.sync=\"post.content\"></trix>\n        <div class=\"Post-edit__delete-container\">\n            <button class=\"Button Button--danger Post-edit__delete\" @click=\"delete(post.id)\">DELETE</button>\n        </div>\n    </div>\n</div>\n";
 
 },{}],14:[function(require,module,exports){
@@ -311,7 +311,7 @@ module.exports = {
     }
 };
 
-},{"../mixins/post-resource":22,"./post-sidebar.template.html":15}],15:[function(require,module,exports){
+},{"../mixins/post-resource":21,"./post-sidebar.template.html":15}],15:[function(require,module,exports){
 module.exports = "<div class=\"Post-sidebar\">\n    <ul class=\"Post-sidebar__list\">\n        <li @click=\"create()\" class=\"Post-sidebar__item Post-sidebar__create\">\n            <object class=\"Icon__medium Post-sidebar__create-icon\" data=\"/images/icons/create.svg\" type=\"image/svg+xml\"></object>\n        </li>\n        <li\n            class=\"Post-sidebar__item\"\n            v-for=\"post in posts\"\n            v-bind:class=\"{'Post-sidebar--active': post.id == active}\"\n            @click=\"this.setEdit(post.id)\">\n            <span\n                v-if=\"post.id !== active || !hasEditingPost\"\n                class=\"Post-sidebar__title\"\n                >{{ post.title |truncate 35 }}</span>\n            <span\n                v-if=\"post.id == active && hasEditingPost\"\n                class=\"Post-sidebar__title\"\n                >{{ editPost.title |truncate 35 }}</span>\n\n        </li>\n    </ul>\n</div>\n";
 
 },{}],16:[function(require,module,exports){
@@ -465,30 +465,17 @@ module.exports = {
     }
 };
 
-},{"./uploader.template.html":19,"dropzone":36}],19:[function(require,module,exports){
+},{"./uploader.template.html":19,"dropzone":35}],19:[function(require,module,exports){
 module.exports = "<div class=\"Uploader\">\n    <form class=\"Uploader__dropzone\">\n        <div class=\"Uploader__message dz-message\" data-dz-message>\n            <object class=\"Icon__huge Uploader__icon\" data=\"/images/icons/upload.svg\" type=\"image/svg+xml\"></object>\n            <p class=\"Uploader__text\"><slot>Drag files here to upload</slot></p>\n        </div>\n    </form>\n    <div class=\"Uploader__previews\"></div>\n</div>\n";
 
 },{}],20:[function(require,module,exports){
-"use strict";
-
-module.exports = {};
-
-},{}],21:[function(require,module,exports){
 'use strict';
 
-var configDev = {};
-try {
-    var configDev = require('./config-dev.js');
-} catch (e) {}
-
-var config = {
-    // url: 'http://sara.app'
+module.exports = {
     url: 'http://api.hilloco.se'
 };
 
-module.exports = Object.assign(config, configDev);
-
-},{"./config-dev.js":20}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 /**
@@ -628,7 +615,7 @@ module.exports = {
     }
 };
 
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 var Store = require('store');
@@ -690,7 +677,7 @@ module.exports = function (Vue, options) {
     };
 };
 
-},{"store":38}],24:[function(require,module,exports){
+},{"store":37}],23:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -722,7 +709,7 @@ module.exports = {
     }
 };
 
-},{"./views/404":25,"./views/admin/layout":27,"./views/admin/post":29,"./views/login":31,"./views/posts":33}],25:[function(require,module,exports){
+},{"./views/404":24,"./views/admin/layout":26,"./views/admin/post":28,"./views/login":30,"./views/posts":32}],24:[function(require,module,exports){
 'use strict';
 
 /**
@@ -736,10 +723,10 @@ module.exports = {
     }
 };
 
-},{"./404.template.html":26}],26:[function(require,module,exports){
+},{"./404.template.html":25}],25:[function(require,module,exports){
 module.exports = "<center><h2>404 - Not found</h2></center>\n";
 
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 /**
@@ -753,10 +740,10 @@ module.exports = {
     }
 };
 
-},{"../../components/nav":8,"./layout.template.html":28}],28:[function(require,module,exports){
+},{"../../components/nav":8,"./layout.template.html":27}],27:[function(require,module,exports){
 module.exports = "<div class=\"Admin-page\">\n    <navigation></navigation>\n    <router-view></router-view>\n</div>\n";
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 /**
@@ -802,10 +789,10 @@ module.exports = {
     }
 };
 
-},{"../../components/post-edit":12,"../../components/post-sidebar":14,"../../mixins/post-resource":22,"./post.template.html":30}],30:[function(require,module,exports){
+},{"../../components/post-edit":12,"../../components/post-sidebar":14,"../../mixins/post-resource":21,"./post.template.html":29}],29:[function(require,module,exports){
 module.exports = "<div class=\"Post-admin-page\">\n    <post-sidebar\n        v-bind:class=\"{'Post-sidebar--small': editing}\"\n        :edit-post.sync=\"post\"\n        ></post-sidebar>\n    <post-edit\n        v-bind:class=\"{'Post-edit--small': !editing}\"\n        :post.sync=\"post\"\n        ></post-edit>\n</div>\n";
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 /**
@@ -828,10 +815,10 @@ module.exports = {
     }
 };
 
-},{"./login.template.html":32}],32:[function(require,module,exports){
+},{"./login.template.html":31}],31:[function(require,module,exports){
 module.exports = "<div class=\"Login\">\n    <form class=\"Login__form\" @submit.prevent=\"login\">\n        <h2 class=\"Login__title\">Login</h2>\n        <input class=\"Login__input\" type=\"text\" placeholder=\"Email\" v-model=\"email\">\n        <input class=\"Login__input\" type=\"password\" placeholder=\"Password\" v-model=\"password\">\n        <button type=\"submit\" class=\"Button\">Login</button>\n    </form>\n</div>\n";
 
-},{}],33:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 /**
@@ -860,10 +847,10 @@ module.exports = {
     methods: {}
 };
 
-},{"../components/article":2,"../components/header":4,"../components/loader":6,"../mixins/post-resource":22,"./posts.template.html":34}],34:[function(require,module,exports){
+},{"../components/article":2,"../components/header":4,"../components/loader":6,"../mixins/post-resource":21,"./posts.template.html":33}],33:[function(require,module,exports){
 module.exports = "<div>\n    <site-header></site-header>\n    <loader v-if=\"loading\">posts</loader>\n\n    <div v-if=\"error\">\n        <h3>{{message}}</h3>\n    </div>\n\n    <section v-if=\"!loading\" v-for=\"post in posts\">\n        <blog-article :post.sync=\"post\"></blog-article>\n    </section>\n</div>\n";
 
-},{}],35:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 var Vue = require('vue');
@@ -895,7 +882,7 @@ Vue.filter('truncate', function (value, length) {
 
 module.exports = Vue;
 
-},{"./plugins/authenticate":23,"vue":64,"vue-resource":52,"vue-router":63}],36:[function(require,module,exports){
+},{"./plugins/authenticate":22,"vue":63,"vue-resource":51,"vue-router":62}],35:[function(require,module,exports){
 
 /*
  *
@@ -2664,7 +2651,7 @@ module.exports = Vue;
 
 }).call(this);
 
-},{}],37:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2757,7 +2744,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],38:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (global){
 "use strict"
 // Module export pattern from
@@ -2953,7 +2940,7 @@ process.umask = function() { return 0; };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  * Before Interceptor.
  */
@@ -2973,7 +2960,7 @@ module.exports = {
 
 };
 
-},{"../util":62}],40:[function(require,module,exports){
+},{"../util":61}],39:[function(require,module,exports){
 /**
  * Base client.
  */
@@ -3040,7 +3027,7 @@ function parseHeaders(str) {
     return headers;
 }
 
-},{"../../promise":55,"../../util":62,"./xhr":43}],41:[function(require,module,exports){
+},{"../../promise":54,"../../util":61,"./xhr":42}],40:[function(require,module,exports){
 /**
  * JSONP client.
  */
@@ -3090,7 +3077,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":55,"../../util":62}],42:[function(require,module,exports){
+},{"../../promise":54,"../../util":61}],41:[function(require,module,exports){
 /**
  * XDomain client (Internet Explorer).
  */
@@ -3129,7 +3116,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":55,"../../util":62}],43:[function(require,module,exports){
+},{"../../promise":54,"../../util":61}],42:[function(require,module,exports){
 /**
  * XMLHttp client.
  */
@@ -3181,7 +3168,7 @@ module.exports = function (request) {
     });
 };
 
-},{"../../promise":55,"../../util":62}],44:[function(require,module,exports){
+},{"../../promise":54,"../../util":61}],43:[function(require,module,exports){
 /**
  * CORS Interceptor.
  */
@@ -3220,7 +3207,7 @@ function crossOrigin(request) {
     return (requestUrl.protocol !== originUrl.protocol || requestUrl.host !== originUrl.host);
 }
 
-},{"../util":62,"./client/xdr":42}],45:[function(require,module,exports){
+},{"../util":61,"./client/xdr":41}],44:[function(require,module,exports){
 /**
  * Header Interceptor.
  */
@@ -3248,7 +3235,7 @@ module.exports = {
 
 };
 
-},{"../util":62}],46:[function(require,module,exports){
+},{"../util":61}],45:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -3348,7 +3335,7 @@ Http.headers = {
 
 module.exports = _.http = Http;
 
-},{"../promise":55,"../util":62,"./before":39,"./client":40,"./cors":44,"./header":45,"./interceptor":47,"./jsonp":48,"./method":49,"./mime":50,"./timeout":51}],47:[function(require,module,exports){
+},{"../promise":54,"../util":61,"./before":38,"./client":39,"./cors":43,"./header":44,"./interceptor":46,"./jsonp":47,"./method":48,"./mime":49,"./timeout":50}],46:[function(require,module,exports){
 /**
  * Interceptor factory.
  */
@@ -3395,7 +3382,7 @@ function when(value, fulfilled, rejected) {
     return promise.then(fulfilled, rejected);
 }
 
-},{"../promise":55,"../util":62}],48:[function(require,module,exports){
+},{"../promise":54,"../util":61}],47:[function(require,module,exports){
 /**
  * JSONP Interceptor.
  */
@@ -3415,7 +3402,7 @@ module.exports = {
 
 };
 
-},{"./client/jsonp":41}],49:[function(require,module,exports){
+},{"./client/jsonp":40}],48:[function(require,module,exports){
 /**
  * HTTP method override Interceptor.
  */
@@ -3434,7 +3421,7 @@ module.exports = {
 
 };
 
-},{}],50:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 /**
  * Mime Interceptor.
  */
@@ -3472,7 +3459,7 @@ module.exports = {
 
 };
 
-},{"../util":62}],51:[function(require,module,exports){
+},{"../util":61}],50:[function(require,module,exports){
 /**
  * Timeout Interceptor.
  */
@@ -3504,7 +3491,7 @@ module.exports = function () {
     };
 };
 
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -3559,7 +3546,7 @@ if (window.Vue) {
 
 module.exports = install;
 
-},{"./http":46,"./promise":55,"./resource":56,"./url":57,"./util":62}],53:[function(require,module,exports){
+},{"./http":45,"./promise":54,"./resource":55,"./url":56,"./util":61}],52:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
  */
@@ -3740,7 +3727,7 @@ p.catch = function (onRejected) {
 
 module.exports = Promise;
 
-},{"../util":62}],54:[function(require,module,exports){
+},{"../util":61}],53:[function(require,module,exports){
 /**
  * URL Template v2.0.6 (https://github.com/bramstein/url-template)
  */
@@ -3892,7 +3879,7 @@ exports.encodeReserved = function (str) {
     }).join('');
 };
 
-},{}],55:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /**
  * Promise adapter.
  */
@@ -4003,7 +3990,7 @@ p.always = function (callback) {
 
 module.exports = Promise;
 
-},{"./lib/promise":53,"./util":62}],56:[function(require,module,exports){
+},{"./lib/promise":52,"./util":61}],55:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -4115,7 +4102,7 @@ Resource.actions = {
 
 module.exports = _.resource = Resource;
 
-},{"./util":62}],57:[function(require,module,exports){
+},{"./util":61}],56:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -4247,7 +4234,7 @@ function serialize(params, obj, scope) {
 
 module.exports = _.url = Url;
 
-},{"../util":62,"./legacy":58,"./query":59,"./root":60,"./template":61}],58:[function(require,module,exports){
+},{"../util":61,"./legacy":57,"./query":58,"./root":59,"./template":60}],57:[function(require,module,exports){
 /**
  * Legacy Transform.
  */
@@ -4295,7 +4282,7 @@ function encodeUriQuery(value, spaces) {
         replace(/%20/g, (spaces ? '%20' : '+'));
 }
 
-},{"../util":62}],59:[function(require,module,exports){
+},{"../util":61}],58:[function(require,module,exports){
 /**
  * Query Parameter Transform.
  */
@@ -4321,7 +4308,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":62}],60:[function(require,module,exports){
+},{"../util":61}],59:[function(require,module,exports){
 /**
  * Root Prefix Transform.
  */
@@ -4339,7 +4326,7 @@ module.exports = function (options, next) {
     return url;
 };
 
-},{"../util":62}],61:[function(require,module,exports){
+},{"../util":61}],60:[function(require,module,exports){
 /**
  * URL Template (RFC 6570) Transform.
  */
@@ -4357,7 +4344,7 @@ module.exports = function (options) {
     return url;
 };
 
-},{"../lib/url-template":54}],62:[function(require,module,exports){
+},{"../lib/url-template":53}],61:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -4481,7 +4468,7 @@ function merge(target, source, deep) {
     }
 }
 
-},{}],63:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /*!
  * vue-router v0.7.11
  * (c) 2016 Evan You
@@ -7131,7 +7118,7 @@ function merge(target, source, deep) {
   return Router;
 
 }));
-},{}],64:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v1.0.16
@@ -16727,5 +16714,5 @@ if (devtools) {
 module.exports = Vue;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":37}]},{},[1])
+},{"_process":36}]},{},[1])
 

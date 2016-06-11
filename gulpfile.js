@@ -176,7 +176,7 @@ function karmaTestPreCommit() {
 gulp.task('test', function() { return karmaTest(); });
 gulp.task('test-pre-commit', function() { return karmaTestPreCommit(); });
 
-gulp.task('default', ['images', 'styles', 'scripts', 'html', 'test', 'webserver', 'watch']);
+gulp.task('default', ['images', 'styles', 'scripts', 'html', 'test']);
 
 gulp.task('pre-commit', ['lintJs', 'test-pre-commit']);
 
