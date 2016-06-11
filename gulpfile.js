@@ -120,6 +120,12 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./public'));
 });
 
+gulp.task('prodConf', function() {
+    gulp.src('./app/js/config-prod.js')
+    .pipe(rename({basename: 'config'}))
+    .pipe(gulp.dest('./app/js/'));
+});
+
 gulp.task('images', function() {
     gulp.src('./app/images/**/*')
     .pipe(gulp.dest('./public/images/'));
@@ -177,7 +183,7 @@ gulp.task('test', function() { return karmaTest(); });
 gulp.task('test-pre-commit', function() { return karmaTestPreCommit(); });
 
 gulp.task('default', ['images', 'styles', 'scripts', 'html', 'test', 'webserver', 'watch']);
-gulp.task('prod', ['images', 'styles', 'scripts', 'html']);
+gulp.task('prod', ['prodConf', 'images', 'styles', 'html', 'scripts']);
 
 gulp.task('pre-commit', ['lintJs', 'test-pre-commit']);
 
