@@ -6,6 +6,7 @@
     "type": "git",
     "url": "https://github.com/MaxHill/investment.git"
   },
+  "engines" : { "npm" : "~3.9.0" },
   "main": "gulpfile.js",
   "dependencies": {
     "lost": "^6.6.2",
