@@ -3,6 +3,7 @@ node_js:
   - "0.12"
 before_script:
   - npm install -g gulp
+  - gulp prodConf
   - gulp prod
 after_success:
   - surge --project ./public --domain sara.hilloco.se
