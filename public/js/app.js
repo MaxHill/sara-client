@@ -378,7 +378,9 @@ module.exports = {
         };
     },
     ready: function ready() {
+        // jscs:disable
         this.options.headers.Authorization = this.$http.headers.common['Authorization'];
+        // jscs:enable
         this.setup();
     },
 
@@ -624,7 +626,9 @@ module.exports = function (Vue, options) {
         if (typeof user !== 'undefined') {
             var timeoutIso = user.timeout.replace(' ', 'T');
             if (new Date(timeoutIso) > new Date()) {
+                // jscs:disable
                 Vue.http.headers.common['Authorization'] = user.token;
+                // jscs:enable
                 return true;
             }
         }
@@ -649,14 +653,18 @@ module.exports = function (Vue, options) {
     };
 
     Vue.prototype.$logout = function () {
+        // jscs:disable
         Vue.http.headers.common['Authorization'] = null;
+        // jscs:enable
         Store.remove('user');
         return false;
     };
 
     Vue.prototype.$handleSuccessfullLogin = function (response) {
         var token = 'Bearer ' + response.data.token;
+        // jscs:disable
         Vue.http.headers.common['Authorization'] = token;
+        // jscs:enable
 
         // Save user to localstorage.
         Store.set('user', {

@@ -6,14 +6,21 @@ require('./build-tasks/test');
 elixir.config.assetsPath = 'app';
 
 elixir(function(mix) {
+    if (elixir.config.production) {
+        mix.copy('app/js/config-prod.js', 'app/js/config.js');
+    }
+
     mix
         .browserify('app.js')
         .sass([
             'styles.scss',
         ], 'public/css')
         .copy('app/index.html', 'public/index.html')
-        .copy('app/images/**/*', 'public/images/')
-        .test(['app/js/**/*.js', 'test/**/*.js']);
+        .copy('app/images/**/*', 'public/images/');
+
+    if (!elixir.config.production) {
+        mix.test(['app/js/**/*.js', 'test/**/*.js']);
+    }
 });
 
 // Lint javascript

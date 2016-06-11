@@ -4,7 +4,7 @@ node_js:
 before_script:
   - npm install -g gulp
   - gulp prodConf
-  - gulp prod
+  - gulp --production
 after_success:
   - surge --project ./public --domain sara.hilloco.se
 branches:
