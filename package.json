@@ -26,6 +26,7 @@
     "gulp-nightwatch": "^0.2.9",
     "gulp-nightwatch-headless": "^1.0.4",
     "gulp-notify": "^2.2.0",
+    "gulp-shell": "^0.5.2",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-webserver": "^0.9.1",
     "guppy-pre-commit": "^0.3.0",
@@ -40,8 +41,8 @@
     "laravel-elixir-karma": "^0.2.2",
     "nightwatch": "^0.8.18",
     "node-notifier": "^4.4.0",
-    "phantomjs-prebuilt": "^2.1.7",
     "phantomjs": "^1.9.19",
+    "phantomjs-prebuilt": "^2.1.7",
     "proxyquireify": "^3.0.1",
     "run-sequence": "^1.1.5",
     "stringify": "^3.2.0"
