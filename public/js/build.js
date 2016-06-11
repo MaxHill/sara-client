@@ -472,7 +472,8 @@ module.exports = "<div class=\"Uploader\">\n    <form class=\"Uploader__dropzone
 'use strict';
 
 module.exports = {
-    url: 'http://api.hilloco.se'
+    url: 'http://api.hilloco.se',
+    test: 'testing'
 };
 
 },{}],21:[function(require,module,exports){

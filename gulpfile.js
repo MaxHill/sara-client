@@ -179,11 +179,13 @@ function karmaTestPreCommit() {
   }).start();
 };
 
+gulp.task('exit',function() {process.exit(0);});
+
 gulp.task('test', function() { return karmaTest(); });
 gulp.task('test-pre-commit', function() { return karmaTestPreCommit(); });
 
 gulp.task('default', ['images', 'styles', 'scripts', 'html', 'test', 'webserver', 'watch']);
-gulp.task('prod', ['prodConf', 'images', 'styles', 'html', 'scripts']);
+gulp.task('prod', ['prodConf', 'images', 'styles', 'html', 'scripts', 'exit']);
 
 gulp.task('pre-commit', ['lintJs', 'test-pre-commit']);
 
