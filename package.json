@@ -46,6 +46,7 @@
     "phantomjs": "^1.9.19",
     "proxyquireify": "^3.0.1",
     "stringify": "^3.2.0",
+    "surge": "^0.18.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.6.1"
