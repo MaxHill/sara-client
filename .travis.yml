@@ -2,7 +2,6 @@ language: node_js
 node_js:
   - "0.12"
 before_script:
-  - rm ./app/js/config.js && mv ./app/js/config-prod.js ./app/js/config.js
   - npm install -g gulp
 script: gulp prod
 after_success:
