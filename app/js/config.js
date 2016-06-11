@@ -1,3 +1,3 @@
 module.exports = {
-    url: 'http://sara.app'
+    url: 'http://api.hilloco.se'
 };
