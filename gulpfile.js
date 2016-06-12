@@ -16,6 +16,7 @@ elixir(function(mix) {
             'styles.scss',
         ], 'public/css')
         .copy('app/index.html', 'public/index.html')
+        .copy('app/index.html', 'public/200.html')
         .copy('app/images/**/*', 'public/images/');
 
     if (!elixir.config.production) {
